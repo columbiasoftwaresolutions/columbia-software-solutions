@@ -1,567 +1,732 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CSS / Columbia Software Solutions</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;600;700&display=swap');
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: #0a0a0a;
-    color: #e0e0e0;
-    font-family: 'Space Grotesk', sans-serif;
-    overflow-x: hidden;
-  }
-
-  .cursor-glow {
-    position: fixed;
-    width: 600px;
-    height: 600px;
-    border-radius: 50%;
-    pointer-events: none;
-    background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%);
-    transform: translate(-50%, -50%);
-    z-index: 0;
-    transition: all 0.3s ease;
-  }
-
-  /* Nav */
-  .nav {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    padding: 20px 10vw;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 50;
-    background: rgba(10,10,10,0.8);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-  }
-
-  .nav-logo {
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 700;
-    font-size: 16px;
-    color: #e0e0e0;
-    text-decoration: none;
-    letter-spacing: -0.5px;
-  }
-
-  .nav-logo .accent { color: #6366f1; }
-
-  .nav-links {
-    display: flex;
-    gap: 32px;
-    list-style: none;
-  }
-
-  .nav-links a {
-    color: #888;
-    text-decoration: none;
-    font-size: 14px;
-    transition: color 0.2s;
-  }
-
-  .nav-links a:hover { color: #e0e0e0; }
-
-  /* Hero */
-  .hero {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 0 10vw;
-    position: relative;
-    z-index: 1;
-  }
-
-  .hero-tag {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    color: #6366f1;
-    letter-spacing: 2px;
-    margin-bottom: 24px;
-  }
-
-  .big-text {
-    font-size: clamp(40px, 6vw, 72px);
-    font-weight: 700;
-    line-height: 1.1;
-    margin-bottom: 24px;
-    letter-spacing: -2px;
-  }
-
-  .big-text .accent {
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  .hero-sub {
-    font-size: 18px;
-    color: #888;
-    max-width: 480px;
-    line-height: 1.7;
-    margin-bottom: 40px;
-  }
-
-  .terminal-window {
-    background: #111;
-    border: 1px solid #222;
-    border-radius: 12px;
-    max-width: 700px;
-    overflow: hidden;
-    box-shadow: 0 0 80px rgba(99,102,241,0.1);
-  }
-
-  .terminal-bar {
-    background: #181818;
-    padding: 12px 16px;
-    display: flex;
-    gap: 8px;
-    border-bottom: 1px solid #222;
-  }
-
-  .terminal-dot { width: 12px; height: 12px; border-radius: 50%; }
-  .terminal-dot.red { background: #ff5f57; }
-  .terminal-dot.yellow { background: #febc2e; }
-  .terminal-dot.green { background: #28c840; }
-
-  .terminal-body {
-    padding: 24px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 15px;
-    line-height: 1.8;
-  }
-
-  .prompt { color: #6366f1; }
-  .command { color: #e0e0e0; }
-  .output { color: #888; }
-  .highlight { color: #6366f1; }
-  .success { color: #28c840; }
-
-  .typed-line { opacity: 0; animation: fadeIn 0.3s ease forwards; }
-
-  .cursor-blink {
-    display: inline-block;
-    width: 10px;
-    height: 18px;
-    background: #6366f1;
-    animation: blink 1s infinite;
-    vertical-align: text-bottom;
-    margin-left: 2px;
-  }
-
-  @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
-  @keyframes fadeIn { to { opacity: 1; } }
-
-  /* Sections */
-  .section {
-    padding: 120px 10vw;
-    position: relative;
-    z-index: 1;
-  }
-
-  .section-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    color: #6366f1;
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    margin-bottom: 24px;
-  }
-
-  .section h2 {
-    font-size: clamp(28px, 4vw, 48px);
-    font-weight: 700;
-    margin-bottom: 24px;
-    letter-spacing: -1px;
-  }
-
-  .section p {
-    font-size: 18px;
-    color: #999;
-    max-width: 560px;
-    line-height: 1.7;
-  }
-
-  .process-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 32px;
-    margin-top: 48px;
-  }
-
-  .process-card {
-    background: #111;
-    border: 1px solid #1a1a1a;
-    border-radius: 12px;
-    padding: 32px;
-    transition: all 0.3s ease;
-  }
-
-  .process-card:hover {
-    border-color: #6366f1;
-    transform: translateY(-4px);
-    box-shadow: 0 8px 40px rgba(99,102,241,0.1);
-  }
-
-  .process-number {
-    font-family: 'JetBrains Mono', monospace;
-    color: #6366f1;
-    font-size: 14px;
-    margin-bottom: 16px;
-  }
-
-  .process-card h3 { font-size: 20px; margin-bottom: 12px; }
-  .process-card p { font-size: 15px; color: #666; line-height: 1.6; }
-
-  /* Stats */
-  .stats-row {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 32px;
-    margin-top: 48px;
-  }
-
-  .stat { text-align: center; }
-
-  .stat-number {
-    font-size: 48px;
-    font-weight: 700;
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  .stat-label { font-size: 14px; color: #666; margin-top: 8px; }
-
-  /* CTA */
-  .cta-section {
-    text-align: center;
-    padding: 160px 10vw;
-  }
-
-  .cta-section h2 {
-    font-size: clamp(32px, 5vw, 56px);
-    font-weight: 700;
-    margin-bottom: 16px;
-    letter-spacing: -1px;
-  }
-
-  .cta-section p {
-    color: #888;
-    font-size: 18px;
-    margin: 0 auto 40px;
-    max-width: 480px;
-  }
-
-  .cta-buttons {
-    display: flex;
-    gap: 16px;
-    justify-content: center;
-  }
-
-  .btn {
-    padding: 14px 32px;
-    border-radius: 8px;
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    text-decoration: none;
-    transition: all 0.2s ease;
-    border: none;
-    display: inline-block;
-  }
-
-  .btn-primary { background: #6366f1; color: white; }
-  .btn-primary:hover {
-    background: #5558e6;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 24px rgba(99,102,241,0.3);
-  }
-
-  .btn-outline {
-    background: transparent;
-    color: #e0e0e0;
-    border: 1px solid #333;
-  }
-  .btn-outline:hover {
-    border-color: #6366f1;
-    transform: translateY(-2px);
-  }
-
-  /* Contact */
-  .contact-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 48px;
-    margin-top: 48px;
-  }
-
-  .contact-item h3 {
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 8px;
-  }
-
-  .contact-item a {
-    color: #6366f1;
-    text-decoration: none;
-    font-size: 16px;
-  }
-
-  .contact-item a:hover { text-decoration: underline; }
-
-  .contact-item p {
-    font-size: 15px;
-    color: #666;
-    margin-top: 4px;
-  }
-
-  .divider {
-    height: 1px;
-    background: linear-gradient(90deg, transparent, #222, transparent);
-    margin: 0 10vw;
-  }
-
-  .footer {
-    padding: 40px 10vw;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: #444;
-    font-size: 14px;
-  }
-
-  .footer-links { display: flex; gap: 24px; }
-  .footer-links a { color: #555; text-decoration: none; font-size: 13px; }
-  .footer-links a:hover { color: #999; }
-
-  @media (max-width: 768px) {
-    .process-grid { grid-template-columns: 1fr; }
-    .stats-row { grid-template-columns: repeat(2, 1fr); }
-    .cta-buttons { flex-direction: column; align-items: center; }
-    .contact-grid { grid-template-columns: 1fr; }
-    .nav-links { display: none; }
-    .footer { flex-direction: column; gap: 16px; text-align: center; }
-  }
-</style>
-</head>
-<body>
-
-<div class="cursor-glow" id="glow"></div>
-
-<nav class="nav">
-  <a href="#" class="nav-logo"><span class="accent">CSS</span> / Columbia Software Solutions</a>
-  <ul class="nav-links">
-    <li><a href="#how">What we do</a></li>
-    <li><a href="#students">For students</a></li>
-    <li><a href="#contact">Contact</a></li>
-  </ul>
-</nav>
-
-<section class="hero">
-  <div class="hero-tag">Columbia Software Solutions</div>
-  <div class="big-text">
-    Columbia students<br>building <span class="accent">software.</span>
-  </div>
-
-  <div class="terminal-window">
-    <div class="terminal-bar">
-      <div class="terminal-dot red"></div>
-      <div class="terminal-dot yellow"></div>
-      <div class="terminal-dot green"></div>
-    </div>
-    <div class="terminal-body" id="terminal"></div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<section class="section" id="how">
-  <div class="section-label">:(){ :|:& };:</div>
-  <h2>What we do.</h2>
-
-  <div class="process-grid">
-    <div class="process-card">
-      <div class="process-number">01</div>
-      <h3>Work with real companies</h3>
-      <p>You get paired directly with a company that needs software built. They have a real problem, you build the solution. Not a simulation, not a case study.</p>
-    </div>
-    <div class="process-card">
-      <div class="process-number">02</div>
-      <h3>Learn from real engineers</h3>
-      <p>Software engineers mentor you through the entire project. Code reviews, architecture decisions, the stuff you don't get in class. You level up fast.</p>
-    </div>
-    <div class="process-card">
-      <div class="process-number">03</div>
-      <h3>Lead a team</h3>
-      <p>Step up and own a project from start to finish. Manage the client relationship, make technical calls, run a small team. That's the kind of experience that sets you apart.</p>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<section class="section">
-  <div class="section-label">The basics</div>
-  <h2>Built at Columbia.</h2>
-  <div class="stats-row">
-    <div class="stat">
-      <div class="stat-number" id="counter1">0</div>
-      <div class="stat-label">Student engineers</div>
-    </div>
-    <div class="stat">
-      <div class="stat-number" id="counter2">0</div>
-      <div class="stat-label">Active projects</div>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<section class="cta-section">
-  <h2>Want to build something that matters?</h2>
-  <p>We pair small teams of Columbia engineers with real clients who need software built. You ship a real product in 8-10 weeks.</p>
-  <div class="cta-buttons">
-    <a href="mailto:ez2450@columbia.edu?subject=I want to join CSS" class="btn btn-primary">Join CSS</a>
-    <a href="#how" class="btn btn-outline">Learn more</a>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<section class="section" id="students">
-  <div class="section-label">For Columbia students</div>
-  <h2>Tired of building stuff no one uses?</h2>
-  <p>We get it. Class projects are fine but they sit in a GitHub repo and nobody ever looks at them again. This is different. You work with a real client, build something that real people actually use, and walk away with a project you can talk about in interviews.</p>
-  <p style="margin-top: 16px;">We need engineers (any stack), designers, and people who want to lead projects. If you go to Columbia and you can code, we probably want you.</p>
-  <div style="margin-top: 32px;">
-    <a href="mailto:ez2450@columbia.edu?subject=I want to join CSS" class="btn btn-primary">I'm in</a>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<section class="section" id="contact">
-  <div class="section-label">Get in touch</div>
-  <h2>Let's talk.</h2>
-  <p>Questions, want to join, or just curious what we're about. Reach out.</p>
-
-  <div class="contact-grid">
-    <div class="contact-item">
-      <h3>Email</h3>
-      <a href="mailto:ez2450@columbia.edu">ez2450@columbia.edu</a>
-      <p>Best way to reach us. We'll get back to you within a day.</p>
-    </div>
-    <div class="contact-item">
-      <h3>Who's behind this</h3>
-      <p style="color: #999;">Ethan Zhang, Columbia '28. Started CSS because he thought Columbia students should be building real things for real people instead of fake things for a grade.</p>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<div class="footer">
-  <span><span style="color: #6366f1;">CSS</span> / Columbia Software Solutions, 2026</span>
-  <div class="footer-links">
-    <a href="#how">What we do</a>
-    <a href="#students">For students</a>
-    <a href="#contact">Contact</a>
-  </div>
-</div>
-
-<script>
-  document.addEventListener('mousemove', (e) => {
-    const glow = document.getElementById('glow');
-    glow.style.left = e.clientX + 'px';
-    glow.style.top = e.clientY + 'px';
-  });
-
-  const lines = [
-    { type: 'prompt', text: '~ $  ' },
-    { type: 'command', text: 'css init --new-project', delay: 800 },
-    { type: 'output', text: '', delay: 400 },
-    { type: 'output', text: 'looking for clients who need help...', delay: 600 },
-    { type: 'success', text: 'found: nonprofit needs a volunteer tracker', delay: 500 },
-    { type: 'output', text: '', delay: 200 },
-    { type: 'output', text: 'putting a team together...', delay: 600 },
-    { type: 'success', text: 'matched: 3 engineers (react, python, postgres)', delay: 500 },
-    { type: 'output', text: '', delay: 200 },
-    { type: 'output', text: 'building...', delay: 800 },
-    { type: 'highlight', text: '████████████████████████ 100%', delay: 400 },
-    { type: 'output', text: '', delay: 200 },
-    { type: 'success', text: 'shipped. client happy. resume actually good now.', delay: 300 },
-    { type: 'output', text: '', delay: 200 },
-    { type: 'prompt', text: '~ $  ', delay: 500 },
-    { type: 'cursor', text: '', delay: 0 },
-  ];
-
-  const terminal = document.getElementById('terminal');
-  let totalDelay = 1000;
-
-  lines.forEach((line) => {
-    totalDelay += (line.delay || 0);
-    setTimeout(() => {
-      if (line.type === 'cursor') {
-        const span = document.createElement('span');
-        span.className = 'cursor-blink';
-        terminal.lastElementChild.appendChild(span);
-        return;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSS / Columbia Software Solutions</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;600;700&display=swap");
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
       }
-      const div = document.createElement('div');
-      div.className = 'typed-line';
-      div.style.animationDelay = '0s';
-      if (line.type === 'prompt') {
-        div.innerHTML = `<span class="prompt">${line.text}</span>`;
-      } else {
-        div.innerHTML = `<span class="${line.type}">${line.text}</span>`;
+      html {
+        scroll-behavior: smooth;
       }
-      if (line.type === 'command' && terminal.lastElementChild) {
-        terminal.lastElementChild.innerHTML += `<span class="${line.type}">${line.text}</span>`;
-        return;
+
+      body {
+        background: #0a0a0a;
+        color: #e0e0e0;
+        font-family: "Space Grotesk", sans-serif;
+        overflow-x: hidden;
       }
-      if (line.type === 'cursor') return;
-      terminal.appendChild(div);
-      terminal.scrollTop = terminal.scrollHeight;
-    }, totalDelay);
-  });
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        animateCounter('counter1', 0, 15, 1500);
-        animateCounter('counter2', 0, 3, 1500);
-        observer.unobserve(entry.target);
+      .cursor-glow {
+        position: fixed;
+        width: 600px;
+        height: 600px;
+        border-radius: 50%;
+        pointer-events: none;
+        background: radial-gradient(
+          circle,
+          rgba(99, 102, 241, 0.08) 0%,
+          transparent 70%
+        );
+        transform: translate(-50%, -50%);
+        z-index: 0;
+        transition: all 0.3s ease;
       }
-    });
-  }, { threshold: 0.5 });
 
-  const statsSection = document.querySelectorAll('.stats-row')[0];
-  if (statsSection) observer.observe(statsSection);
+      /* Nav */
+      .nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        padding: 20px 10vw;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 50;
+        background: rgba(10, 10, 10, 0.8);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      }
 
-  function animateCounter(id, start, end, duration) {
-    const el = document.getElementById(id);
-    const range = end - start;
-    const stepTime = duration / range;
-    let current = start;
-    const timer = setInterval(() => {
-      current++;
-      el.textContent = current;
-      if (current >= end) clearInterval(timer);
-    }, stepTime);
-  }
-</script>
+      .nav-logo {
+        font-family: "JetBrains Mono", monospace;
+        font-weight: 700;
+        font-size: 16px;
+        color: #e0e0e0;
+        text-decoration: none;
+        letter-spacing: -0.5px;
+      }
 
-</body>
+      .nav-logo .accent {
+        color: #6366f1;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 32px;
+        list-style: none;
+      }
+
+      .nav-links a {
+        color: #888;
+        text-decoration: none;
+        font-size: 14px;
+        transition: color 0.2s;
+      }
+
+      .nav-links a:hover {
+        color: #e0e0e0;
+      }
+
+      /* Hero */
+      .hero {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0 10vw;
+        position: relative;
+        z-index: 1;
+      }
+
+      .hero-tag {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 13px;
+        color: #6366f1;
+        letter-spacing: 2px;
+        margin-bottom: 24px;
+      }
+
+      .big-text {
+        font-size: clamp(40px, 6vw, 72px);
+        font-weight: 700;
+        line-height: 1.1;
+        margin-bottom: 24px;
+        letter-spacing: -2px;
+      }
+
+      .big-text .accent {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .hero-sub {
+        font-size: 18px;
+        color: #888;
+        max-width: 480px;
+        line-height: 1.7;
+        margin-bottom: 40px;
+      }
+
+      .terminal-window {
+        background: #111;
+        border: 1px solid #222;
+        border-radius: 12px;
+        max-width: 700px;
+        overflow: hidden;
+        box-shadow: 0 0 80px rgba(99, 102, 241, 0.1);
+      }
+
+      .terminal-bar {
+        background: #181818;
+        padding: 12px 16px;
+        display: flex;
+        gap: 8px;
+        border-bottom: 1px solid #222;
+      }
+
+      .terminal-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+      }
+      .terminal-dot.red {
+        background: #ff5f57;
+      }
+      .terminal-dot.yellow {
+        background: #febc2e;
+      }
+      .terminal-dot.green {
+        background: #28c840;
+      }
+
+      .terminal-body {
+        padding: 24px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 15px;
+        line-height: 1.8;
+      }
+
+      .prompt {
+        color: #6366f1;
+      }
+      .command {
+        color: #e0e0e0;
+      }
+      .output {
+        color: #888;
+      }
+      .highlight {
+        color: #6366f1;
+      }
+      .success {
+        color: #28c840;
+      }
+
+      .typed-line {
+        opacity: 0;
+        animation: fadeIn 0.3s ease forwards;
+      }
+
+      .cursor-blink {
+        display: inline-block;
+        width: 10px;
+        height: 18px;
+        background: #6366f1;
+        animation: blink 1s infinite;
+        vertical-align: text-bottom;
+        margin-left: 2px;
+      }
+
+      @keyframes blink {
+        0%,
+        50% {
+          opacity: 1;
+        }
+        51%,
+        100% {
+          opacity: 0;
+        }
+      }
+      @keyframes fadeIn {
+        to {
+          opacity: 1;
+        }
+      }
+
+      /* Sections */
+      .section {
+        padding: 120px 10vw;
+        position: relative;
+        z-index: 1;
+      }
+
+      .section-label {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 13px;
+        color: #6366f1;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        margin-bottom: 24px;
+      }
+
+      .section h2 {
+        font-size: clamp(28px, 4vw, 48px);
+        font-weight: 700;
+        margin-bottom: 24px;
+        letter-spacing: -1px;
+      }
+
+      .section p {
+        font-size: 18px;
+        color: #999;
+        max-width: 560px;
+        line-height: 1.7;
+      }
+
+      .process-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 32px;
+        margin-top: 48px;
+      }
+
+      .process-card {
+        background: #111;
+        border: 1px solid #1a1a1a;
+        border-radius: 12px;
+        padding: 32px;
+        transition: all 0.3s ease;
+      }
+
+      .process-card:hover {
+        border-color: #6366f1;
+        transform: translateY(-4px);
+        box-shadow: 0 8px 40px rgba(99, 102, 241, 0.1);
+      }
+
+      .process-number {
+        font-family: "JetBrains Mono", monospace;
+        color: #6366f1;
+        font-size: 14px;
+        margin-bottom: 16px;
+      }
+
+      .process-card h3 {
+        font-size: 20px;
+        margin-bottom: 12px;
+      }
+      .process-card p {
+        font-size: 15px;
+        color: #666;
+        line-height: 1.6;
+      }
+
+      /* Stats */
+      .stats-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 32px;
+        margin-top: 48px;
+      }
+
+      .stat {
+        text-align: center;
+      }
+
+      .stat-number {
+        font-size: 48px;
+        font-weight: 700;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .stat-label {
+        font-size: 14px;
+        color: #666;
+        margin-top: 8px;
+      }
+
+      /* CTA */
+      .cta-section {
+        text-align: center;
+        padding: 160px 10vw;
+      }
+
+      .cta-section h2 {
+        font-size: clamp(32px, 5vw, 56px);
+        font-weight: 700;
+        margin-bottom: 16px;
+        letter-spacing: -1px;
+      }
+
+      .cta-section p {
+        color: #888;
+        font-size: 18px;
+        margin: 0 auto 40px;
+        max-width: 480px;
+      }
+
+      .cta-buttons {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+      }
+
+      .btn {
+        padding: 14px 32px;
+        border-radius: 8px;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border: none;
+        display: inline-block;
+      }
+
+      .btn-primary {
+        background: #6366f1;
+        color: white;
+      }
+      .btn-primary:hover {
+        background: #5558e6;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 24px rgba(99, 102, 241, 0.3);
+      }
+
+      .btn-outline {
+        background: transparent;
+        color: #e0e0e0;
+        border: 1px solid #333;
+      }
+      .btn-outline:hover {
+        border-color: #6366f1;
+        transform: translateY(-2px);
+      }
+
+      /* Contact */
+      .contact-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 48px;
+        margin-top: 48px;
+      }
+
+      .contact-item h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+
+      .contact-item a {
+        color: #6366f1;
+        text-decoration: none;
+        font-size: 16px;
+      }
+
+      .contact-item a:hover {
+        text-decoration: underline;
+      }
+
+      .contact-item p {
+        font-size: 15px;
+        color: #666;
+        margin-top: 4px;
+      }
+
+      .divider {
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #222, transparent);
+        margin: 0 10vw;
+      }
+
+      .footer {
+        padding: 40px 10vw;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #444;
+        font-size: 14px;
+      }
+
+      .footer-links {
+        display: flex;
+        gap: 24px;
+      }
+      .footer-links a {
+        color: #555;
+        text-decoration: none;
+        font-size: 13px;
+      }
+      .footer-links a:hover {
+        color: #999;
+      }
+
+      @media (max-width: 768px) {
+        .process-grid {
+          grid-template-columns: 1fr;
+        }
+        .stats-row {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .cta-buttons {
+          flex-direction: column;
+          align-items: center;
+        }
+        .contact-grid {
+          grid-template-columns: 1fr;
+        }
+        .nav-links {
+          display: none;
+        }
+        .footer {
+          flex-direction: column;
+          gap: 16px;
+          text-align: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="cursor-glow" id="glow"></div>
+
+    <nav class="nav">
+      <a href="#" class="nav-logo"
+        ><span class="accent">CSS</span> / Columbia Software Solutions</a
+      >
+      <ul class="nav-links">
+        <li><a href="#how">What we do</a></li>
+        <li><a href="#students">For students</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+
+    <section class="hero">
+      <div class="hero-tag">Columbia Software Solutions</div>
+      <div class="big-text">
+        Columbia students<br />building <span class="accent">software.</span>
+      </div>
+
+      <div class="terminal-window">
+        <div class="terminal-bar">
+          <div class="terminal-dot red"></div>
+          <div class="terminal-dot yellow"></div>
+          <div class="terminal-dot green"></div>
+        </div>
+        <div class="terminal-body" id="terminal"></div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="section" id="how">
+      <div class="section-label">npm run build:solution</div>
+      <h2>What we do.</h2>
+
+      <div class="process-grid">
+        <div class="process-card">
+          <div class="process-number">01</div>
+          <h3>Work with real companies</h3>
+          <p>
+            You get paired directly with a company that needs software built.
+            They have a real problem and you build the solution with a team.
+          </p>
+        </div>
+        <div class="process-card">
+          <div class="process-number">02</div>
+          <h3>Learn from real engineers</h3>
+          <p>
+            Software engineers mentor you through the entire project. Code
+            reviews, architecture decisions, ensuring best practices through
+            code reviews and collaborative planning.
+          </p>
+        </div>
+        <div class="process-card">
+          <div class="process-number">03</div>
+          <h3>Lead a team</h3>
+          <p>
+            Step up and own a project from start to finish. Manage the client
+            relationship, make technical calls, run a small team. Email me if
+            interested in leading.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="section">
+      <div class="section-label">The basics</div>
+      <h2>Built at Columbia.</h2>
+      <div class="stats-row">
+        <div class="stat">
+          <div class="stat-number" id="counter1">0</div>
+          <div class="stat-label">Student engineers</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number" id="counter2">0</div>
+          <div class="stat-label">Active projects</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">5+</div>
+          <div class="stat-label">Industry mentors and advisors</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">1</div>
+          <div class="stat-label">Mission: build useful software</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="cta-section">
+      <h2>Want to build something that matters?</h2>
+      <p>
+        We pair small teams of Columbia engineers with real clients who need
+        software built. You ship a real product in 8-10 weeks.
+      </p>
+      <div class="cta-buttons">
+        <a
+          href="https://docs.google.com/forms/d/e/1FAIpQLScoUHxAq8xjWNW69OsZSI5mEzJxL5jkVo1qXRhLIRiP9GqH7w/viewform?usp=dialog"
+          class="btn btn-primary"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Join CSS</a
+        >
+        <a href="#how" class="btn btn-outline">Learn more</a>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="section" id="students">
+      <div class="section-label">For Columbia students</div>
+      <h2>Tired of building stuff no one uses?</h2>
+      <p>
+        Stop writing code that never sees the light of day. Here, you'll work
+        with a client to build a tool that actually launches. It’s the easiest
+        way to get the kind of experience that makes a recruiter stop scrolling.
+      </p>
+      <p style="margin-top: 16px">
+        We need engineers (any stack), designers, and people who want to lead
+        projects. If you go to Columbia and you can code, we probably want you.
+      </p>
+      <div style="margin-top: 32px">
+        <a
+          href="https://docs.google.com/forms/d/e/1FAIpQLScoUHxAq8xjWNW69OsZSI5mEzJxL5jkVo1qXRhLIRiP9GqH7w/viewform?usp=dialog"
+          class="btn btn-primary"
+          target="_blank"
+          rel="noopener noreferrer"
+          >I'm in</a
+        >
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="section" id="contact">
+      <div class="section-label">Get in touch</div>
+      <h2>Let's talk.</h2>
+      <p>
+        Questions, want to join, or just curious what we're about. Reach out.
+      </p>
+
+      <div class="contact-grid">
+        <div class="contact-item">
+          <h3>Email</h3>
+          <a href="mailto:ez2450@columbia.edu">ez2450@columbia.edu</a>
+          <p>Best way to reach us. We'll get back to you within a day.</p>
+        </div>
+        <div class="contact-item">
+          <h3>Who's behind this</h3>
+          <p style="color: #999">
+            Ethan Zhang, Columbia '28. Started CSS because he thought Columbia
+            students should be building real things for real people instead of
+            fake things for linkedin chuds.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <div class="footer">
+      <span
+        ><span style="color: #6366f1">CSS</span> / Columbia Software Solutions,
+        2026</span
+      >
+      <div class="footer-links">
+        <a href="#how">What we do</a>
+        <a href="#students">For students</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("mousemove", (e) => {
+        const glow = document.getElementById("glow");
+        glow.style.left = e.clientX + "px";
+        glow.style.top = e.clientY + "px";
+      });
+
+      const lines = [
+        { type: "prompt", text: "~ $  " },
+        { type: "command", text: "css init --new-project", delay: 800 },
+        { type: "output", text: "", delay: 400 },
+        {
+          type: "output",
+          text: "looking for clients who need help...",
+          delay: 600,
+        },
+        {
+          type: "success",
+          text: "found: nonprofit needs a volunteer tracker",
+          delay: 500,
+        },
+        { type: "output", text: "", delay: 200 },
+        { type: "output", text: "putting a team together...", delay: 600 },
+        {
+          type: "success",
+          text: "matched: 3 engineers (react, python, postgres)",
+          delay: 500,
+        },
+        { type: "output", text: "", delay: 200 },
+        { type: "output", text: "building...", delay: 800 },
+        {
+          type: "highlight",
+          text: "████████████████████████ 100%",
+          delay: 400,
+        },
+        { type: "output", text: "", delay: 200 },
+        {
+          type: "success",
+          text: "shipped. client happy. resume actually good now.",
+          delay: 300,
+        },
+        { type: "output", text: "", delay: 200 },
+        { type: "prompt", text: "~ $  ", delay: 500 },
+        { type: "cursor", text: "", delay: 0 },
+      ];
+
+      const terminal = document.getElementById("terminal");
+      let totalDelay = 1000;
+
+      lines.forEach((line) => {
+        totalDelay += line.delay || 0;
+        setTimeout(() => {
+          if (line.type === "cursor") {
+            const span = document.createElement("span");
+            span.className = "cursor-blink";
+            terminal.lastElementChild.appendChild(span);
+            return;
+          }
+          const div = document.createElement("div");
+          div.className = "typed-line";
+          div.style.animationDelay = "0s";
+          if (line.type === "prompt") {
+            div.innerHTML = `<span class="prompt">${line.text}</span>`;
+          } else {
+            div.innerHTML = `<span class="${line.type}">${line.text}</span>`;
+          }
+          if (line.type === "command" && terminal.lastElementChild) {
+            terminal.lastElementChild.innerHTML += `<span class="${line.type}">${line.text}</span>`;
+            return;
+          }
+          if (line.type === "cursor") return;
+          terminal.appendChild(div);
+          terminal.scrollTop = terminal.scrollHeight;
+        }, totalDelay);
+      });
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              animateCounter("counter1", 0, 15, 1500);
+              animateCounter("counter2", 0, 3, 1500);
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.5 },
+      );
+
+      const statsSection = document.querySelectorAll(".stats-row")[0];
+      if (statsSection) observer.observe(statsSection);
+
+      function animateCounter(id, start, end, duration) {
+        const el = document.getElementById(id);
+        const range = end - start;
+        const stepTime = duration / range;
+        let current = start;
+        const timer = setInterval(() => {
+          current++;
+          el.textContent = current;
+          if (current >= end) clearInterval(timer);
+        }, stepTime);
+      }
+    </script>
+  </body>
 </html>
