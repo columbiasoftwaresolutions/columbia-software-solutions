@@ -29,9 +29,3 @@ Set these up before your first sync.
 
 **Ethan Zhang** — founder
 ez2450@columbia.edu
-
----
-
-## Questions?
-
-Slack first. If it's urgent, text Ethan.
