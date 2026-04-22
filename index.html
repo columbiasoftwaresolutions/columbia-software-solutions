@@ -283,7 +283,7 @@
       /* Stats */
       .stats-row {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(3, 1fr);
         gap: 32px;
         margin-top: 48px;
       }
@@ -457,7 +457,7 @@
       >
       <ul class="nav-links">
         <li><a href="#how">What we do</a></li>
-        <li><a href="#students">For students</a></li>
+        <li><a href="#projects">Projects</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
     </nav>
@@ -495,11 +495,11 @@
         </div>
         <div class="process-card">
           <div class="process-number">02</div>
-          <h3>Learn from real engineers</h3>
+          <h3>Ship something real</h3>
           <p>
-            Software engineers mentor you through the entire project. Code
-            reviews, architecture decisions, ensuring best practices through
-            code reviews and collaborative planning.
+            Write code that runs in production, not just in a class repo. Every
+            project ends with a deployed product that real users depend on —
+            and something concrete you can show in interviews.
           </p>
         </div>
         <div class="process-card">
@@ -507,8 +507,8 @@
           <h3>Lead a team</h3>
           <p>
             Step up and own a project from start to finish. Manage the client
-            relationship, make technical calls, run a small team. Email me if
-            interested in leading.
+            relationship, make technical calls, run a small team. Reach out
+            if you are interested.
           </p>
         </div>
       </div>
@@ -516,25 +516,31 @@
 
     <div class="divider"></div>
 
-    <section class="section">
-      <div class="section-label">The basics</div>
-      <h2>Built at Columbia.</h2>
-      <div class="stats-row">
-        <div class="stat">
-          <div class="stat-number" id="counter1">0</div>
-          <div class="stat-label">Student engineers</div>
-        </div>
-        <div class="stat">
-          <div class="stat-number" id="counter2">0</div>
-          <div class="stat-label">Active projects</div>
-        </div>
-        <div class="stat">
-          <div class="stat-number">5+</div>
-          <div class="stat-label">Industry mentors and advisors</div>
-        </div>
-        <div class="stat">
-          <div class="stat-number">1</div>
-          <div class="stat-label">Mission: build useful software</div>
+    <section class="section" id="projects">
+      <div class="section-label">ls ./projects</div>
+      <h2>Projects.</h2>
+
+      <div class="process-grid" style="grid-template-columns: 1fr">
+        <div class="process-card">
+          <div class="process-number">01</div>
+          <h3>Refettorio Harlem</h3>
+          <p>
+            WhatsApp logging bot and offline-capable tablet check-in app for a
+            Harlem community kitchen. Replaces manual paper tracking with
+            structured data pipelines writing to a shared Google Sheets
+            backend.
+          </p>
+          <p style="margin-top: 12px">
+            Bot: Node.js / Express service handling Twilio webhooks, parsing
+            operational data (food rescue, meals served, demographics) and
+            writing to four Sheets tabs. Tablet: React SPA with IndexedDB
+            offline queue, daily-resetting guest ID counters, and
+            sub-15-second check-in flow. Deployed on Railway.
+          </p>
+          <p style="margin-top: 12px">
+            Stack: Node.js, Express, Twilio API, React, Google Sheets API,
+            IndexedDB, Railway.
+          </p>
         </div>
       </div>
     </section>
@@ -561,31 +567,6 @@
 
     <div class="divider"></div>
 
-    <section class="section" id="students">
-      <div class="section-label">For Columbia students</div>
-      <h2>Tired of building stuff no one uses?</h2>
-      <p>
-        Stop writing code that never sees the light of day. Here, you'll work
-        with a client to build a tool that actually launches. It’s the easiest
-        way to get the kind of experience that makes a recruiter stop scrolling.
-      </p>
-      <p style="margin-top: 16px">
-        We need engineers (any stack), designers, and people who want to lead
-        projects. If you go to Columbia and you can code, we probably want you.
-      </p>
-      <div style="margin-top: 32px">
-        <a
-          href="https://docs.google.com/forms/d/e/1FAIpQLScoUHxAq8xjWNW69OsZSI5mEzJxL5jkVo1qXRhLIRiP9GqH7w/viewform?usp=dialog"
-          class="btn btn-primary"
-          target="_blank"
-          rel="noopener noreferrer"
-          >I'm in</a
-        >
-      </div>
-    </section>
-
-    <div class="divider"></div>
-
     <section class="section" id="contact">
       <div class="section-label">Get in touch</div>
       <h2>Let's talk.</h2>
@@ -595,16 +576,14 @@
 
       <div class="contact-grid">
         <div class="contact-item">
-          <h3>Email</h3>
-          <a href="mailto:ez2450@columbia.edu">ez2450@columbia.edu</a>
-          <p>Best way to reach us. We'll get back to you within a day.</p>
-        </div>
-        <div class="contact-item">
           <h3>Who's behind this</h3>
           <p style="color: #999">
-            Ethan Zhang, Columbia '28. Started CSS because he thought Columbia
-            students should be building real things for real people instead of
-            fake things for linkedin chuds.
+            Ethan Zhang —
+            <a href="mailto:ez2450@columbia.edu">ez2450@columbia.edu</a>
+          </p>
+          <p style="color: #999; margin-top: 8px">
+            Kushaan Vardhan —
+            <a href="mailto:krv2121@columbia.edu">krv2121@columbia.edu</a>
           </p>
         </div>
       </div>
@@ -619,7 +598,7 @@
       >
       <div class="footer-links">
         <a href="#how">What we do</a>
-        <a href="#students">For students</a>
+        <a href="#projects">Projects</a>
         <a href="#contact">Contact</a>
       </div>
     </div>
@@ -700,33 +679,6 @@
         }, totalDelay);
       });
 
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              animateCounter("counter1", 0, 15, 1500);
-              animateCounter("counter2", 0, 3, 1500);
-              observer.unobserve(entry.target);
-            }
-          });
-        },
-        { threshold: 0.5 },
-      );
-
-      const statsSection = document.querySelectorAll(".stats-row")[0];
-      if (statsSection) observer.observe(statsSection);
-
-      function animateCounter(id, start, end, duration) {
-        const el = document.getElementById(id);
-        const range = end - start;
-        const stepTime = duration / range;
-        let current = start;
-        const timer = setInterval(() => {
-          current++;
-          el.textContent = current;
-          if (current >= end) clearInterval(timer);
-        }, stepTime);
-      }
     </script>
   </body>
 </html>
