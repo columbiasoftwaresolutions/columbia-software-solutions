@@ -312,6 +312,33 @@
         line-height: 1.6;
       }
 
+      .press-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 16px;
+        padding: 10px 18px;
+        background: rgba(99, 102, 241, 0.08);
+        border: 1px solid rgba(99, 102, 241, 0.2);
+        border-radius: 8px;
+        color: #a5b4fc;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        letter-spacing: 0.02em;
+      }
+      .press-link:hover {
+        background: rgba(99, 102, 241, 0.15);
+        border-color: #6366f1;
+        color: #c7d2fe;
+        transform: translateY(-1px);
+      }
+      .press-link svg {
+        flex-shrink: 0;
+      }
+
       /* Stats */
       .stats-row {
         display: grid;
@@ -572,6 +599,16 @@
           <p style="margin-top: 12px">
             Stack: Node.js, Express, Twilio API, React, Google Sheets API,
             IndexedDB, Railway.
+          </p>
+          <p style="margin-top: 12px">
+            Featured in
+            <a
+              href="https://www.nytimes.com/2026/01/22/nyregion/refettorio-harlem-nyc-free-food.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              style="color: #6366f1; text-decoration: none"
+              >The New York Times</a
+            >.
           </p>
         </div>
       </div>
