@@ -19,14 +19,12 @@ Set these up before your first sync.
 
 **GitHub** — all code lives here under the CSS org.
 - Org: [https://github.com/columbiasoftwaresolutions]
-
-**Linear** — we track tasks and sprints here.
-- Workspace: [https://linear.app/columbiasoftwaresolutions]
+- View Projects for tasks
 
 ---
 
 ## Website
-- Link: [https://columbiasoftwaresolutions.netlify.app]
+- Link: [https://columbiasoftwaresolutions.com]
 ---
 
 ## Contacts
