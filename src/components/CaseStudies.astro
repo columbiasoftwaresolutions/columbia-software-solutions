@@ -1,0 +1,65 @@
+---
+import { caseStudies } from "../content";
+---
+
+<section id="cases" class="reveal py-24 md:py-32 border-b border-line">
+  <div class="container-x">
+    <p class="eyebrow">Case Studies — Fall 2025</p>
+    <h2 class="display mt-5 max-w-[20ch] text-[clamp(34px,5vw,64px)] text-fg">
+      Production software, used by real people.
+    </h2>
+
+    <div class="mt-16 space-y-20 md:space-y-28">
+      {
+        caseStudies.map((cs, i) => {
+          const reversed = i % 2 === 1;
+          return (
+            <article
+              class={`grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-center ${reversed ? "md:[&>.media]:order-2" : ""}`}
+            >
+              {/* TODO: project screenshot */}
+              <div
+                class="media md:col-span-6 aspect-[4/3] w-full bg-bg-alt border border-line flex items-center justify-center text-[11px] uppercase tracking-eyebrow text-muted"
+                role="img"
+                aria-label={cs.imageAlt}
+              >
+                Placeholder — {cs.imageAlt}
+              </div>
+
+              <div class="md:col-span-6">
+                <p class="eyebrow">{cs.clientName}</p>
+                <blockquote class="mt-5 display text-[clamp(24px,2.4vw,34px)] text-fg leading-[1.15]">
+                  "{cs.quote}"
+                </blockquote>
+                <p class="mt-4 text-[14px] uppercase tracking-eyebrow text-muted">
+                  {cs.attribution}
+                </p>
+
+                <dl class="mt-8 grid grid-cols-3 gap-4 border-t border-line pt-6">
+                  {cs.stats.map((s) => (
+                    <div>
+                      <dt class="display text-[clamp(24px,3vw,40px)] text-fg leading-[1]">
+                        {s.value}
+                      </dt>
+                      <dd class="mt-2 text-[12px] uppercase tracking-eyebrow text-muted">
+                        {s.label}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+
+                <a
+                  href={cs.href}
+                  class="mt-8 inline-flex items-center gap-2 text-[14px] font-medium text-fg border-b border-fg/40 pb-1 transition-colors hover:border-fg"
+                >
+                  View case study
+                  <span aria-hidden="true">→</span>
+                </a>
+              </div>
+            </article>
+          );
+        })
+      }
+    </div>
+  </div>
+</section>

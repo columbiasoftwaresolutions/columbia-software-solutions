@@ -1,0 +1,100 @@
+---
+import { nav, hero, WAITLIST_URL } from "../content";
+---
+
+<header
+  id="site-nav"
+  class="fixed inset-x-0 top-0 z-50 transition-colors duration-200"
+  data-mode="hero"
+>
+  <div class="container-x flex h-16 items-center justify-between">
+    <a
+      href="#top"
+      class="font-display text-[18px] font-semibold uppercase tracking-[0.02em] leading-none"
+      data-nav-link
+      aria-label="Columbia Software Solutions home"
+    >
+      CSS
+    </a>
+
+    <div class="flex items-center gap-8">
+      <nav
+        class="hidden items-center gap-7 md:flex"
+        aria-label="Primary navigation"
+      >
+        {
+          nav.links.map((link) => (
+            <a
+              href={link.href}
+              data-nav-link
+              class="text-[14px] transition-colors"
+            >
+              {link.label}
+            </a>
+          ))
+        }
+      </nav>
+
+      <a
+        href={WAITLIST_URL}
+        data-nav-cta
+        class="inline-flex items-center gap-2 rounded-full px-4 py-2 text-[13px] font-medium transition-colors"
+      >
+        {hero.primaryCta.label}
+        <span aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<style>
+  /* Hero mode: nav sits on dark blue hero -> white text + white CTA pill */
+  #site-nav[data-mode="hero"] [data-nav-link] {
+    color: rgba(255, 255, 255, 0.85);
+  }
+  #site-nav[data-mode="hero"] [data-nav-link]:hover {
+    color: #ffffff;
+  }
+  #site-nav[data-mode="hero"] [data-nav-cta] {
+    background: #ffffff;
+    color: var(--hero-bg);
+  }
+  #site-nav[data-mode="hero"] [data-nav-cta]:hover {
+    background: rgba(255, 255, 255, 0.9);
+  }
+
+  /* Page mode: scrolled past hero -> light background nav with dark text */
+  #site-nav[data-mode="page"] {
+    background: rgba(249, 249, 249, 0.85);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+  #site-nav[data-mode="page"] [data-nav-link] {
+    color: rgba(30, 30, 30, 0.7);
+  }
+  #site-nav[data-mode="page"] [data-nav-link]:hover {
+    color: var(--fg);
+  }
+  #site-nav[data-mode="page"] [data-nav-cta] {
+    background: var(--accent);
+    color: #ffffff;
+  }
+  #site-nav[data-mode="page"] [data-nav-cta]:hover {
+    background: var(--accent-dark);
+  }
+</style>
+
+<script>
+  const nav = document.getElementById("site-nav");
+
+  const update = () => {
+    if (!nav) return;
+    // Threshold: switch to page mode once user scrolls past most of viewport
+    const threshold = Math.min(window.innerHeight * 0.6, 500);
+    nav.dataset.mode = window.scrollY > threshold ? "page" : "hero";
+  };
+
+  update();
+  window.addEventListener("scroll", update, { passive: true });
+  document.addEventListener("astro:after-swap", update);
+</script>

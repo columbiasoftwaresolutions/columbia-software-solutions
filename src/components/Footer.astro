@@ -1,0 +1,49 @@
+---
+const year = new Date().getFullYear();
+const links = [
+  { label: "Work", href: "#work" },
+  { label: "Advisors", href: "#advisors" },
+  { label: "Join", href: "#join" },
+  { label: "Contact", href: "mailto:team@columbiasoftwaresolutions.com" },
+  {
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/company/columbia-software-solutions",
+  },
+  {
+    label: "Instagram",
+    href: "https://www.instagram.com/columbiasoftwaresolutions",
+  },
+];
+---
+
+<footer class="border-t border-line">
+  <div class="container-x flex flex-col md:flex-row md:items-center md:justify-between gap-6 py-10">
+    <a
+      href="#top"
+      class="font-display text-[16px] font-semibold uppercase tracking-[0.02em] text-fg"
+    >
+      CSS / Columbia Software Solutions
+    </a>
+
+    <nav
+      class="flex flex-wrap items-center gap-x-6 gap-y-3 text-[14px] text-fg/70"
+      aria-label="Footer"
+    >
+      {
+        links.map((l) => (
+          <a
+            href={l.href}
+            class="transition-colors hover:text-fg"
+            target={l.href.startsWith("http") ? "_blank" : undefined}
+            rel={l.href.startsWith("http") ? "noopener noreferrer" : undefined}
+          >
+            {l.label}
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+  <div class="container-x pb-10 text-[12px] text-muted">
+    © Columbia Software Solutions {year}
+  </div>
+</footer>

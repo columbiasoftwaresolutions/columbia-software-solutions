@@ -1,0 +1,100 @@
+---
+/**
+ * Wireframe geometric mark — the site's recurring monochrome motif.
+ * Crown-like polygon stack, lightly rotating on scroll via CSS custom prop.
+ */
+interface Props {
+  class?: string;
+  /** Decorative use: ARIA-hide when true. */
+  decorative?: boolean;
+}
+const { class: className = "", decorative = true } = Astro.props;
+---
+
+<div
+  class={`mark-wrap ${className}`}
+  role={decorative ? "presentation" : undefined}
+  aria-hidden={decorative ? "true" : undefined}
+>
+  <svg
+    viewBox="-110 -110 220 220"
+    class="mark-svg"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1"
+    stroke-linejoin="round"
+    stroke-linecap="round"
+  >
+    <g class="mark-outer">
+      <!-- Outer hex -->
+      <polygon points="0,-100 86.6,-50 86.6,50 0,100 -86.6,50 -86.6,-50" />
+    </g>
+    <g class="mark-mid">
+      <!-- Mid square rotated -->
+      <polygon points="0,-72 72,0 0,72 -72,0" />
+    </g>
+    <g class="mark-inner">
+      <!-- Inner crown polygon -->
+      <polygon points="-44,28 -22,-10 -10,18 0,-22 10,18 22,-10 44,28" />
+      <line x1="-44" y1="28" x2="44" y2="28" />
+    </g>
+    <g class="mark-dots">
+      <circle cx="0" cy="-100" r="2.5" fill="currentColor" stroke="none" />
+      <circle cx="86.6" cy="-50" r="2.5" fill="currentColor" stroke="none" />
+      <circle cx="86.6" cy="50" r="2.5" fill="currentColor" stroke="none" />
+      <circle cx="0" cy="100" r="2.5" fill="currentColor" stroke="none" />
+      <circle cx="-86.6" cy="50" r="2.5" fill="currentColor" stroke="none" />
+      <circle cx="-86.6" cy="-50" r="2.5" fill="currentColor" stroke="none" />
+    </g>
+  </svg>
+</div>
+
+<style>
+  .mark-wrap {
+    display: block;
+    color: var(--fg);
+    width: 100%;
+    height: 100%;
+  }
+
+  .mark-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+  }
+
+  .mark-outer {
+    transform-origin: center;
+    animation: spin-cw 60s linear infinite;
+  }
+
+  .mark-mid {
+    transform-origin: center;
+    animation: spin-ccw 40s linear infinite;
+  }
+
+  .mark-inner {
+    transform-origin: center;
+    animation: drift 8s ease-in-out infinite;
+  }
+
+  @keyframes spin-cw {
+    to { transform: rotate(360deg); }
+  }
+  @keyframes spin-ccw {
+    to { transform: rotate(-360deg); }
+  }
+  @keyframes drift {
+    0%, 100% { transform: translateY(-2px); }
+    50% { transform: translateY(2px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mark-outer,
+    .mark-mid,
+    .mark-inner {
+      animation: none;
+    }
+  }
+</style>
