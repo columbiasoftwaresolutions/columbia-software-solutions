@@ -4,7 +4,7 @@ import { caseStudies } from "../content";
 
 <section id="cases" class="reveal py-24 md:py-32 border-b border-line">
   <div class="container-x">
-    <p class="eyebrow">Case Studies — Fall 2025</p>
+    <p class="eyebrow">Case Study — Fall 2025</p>
     <h2 class="display mt-5 max-w-[20ch] text-[clamp(34px,5vw,64px)] text-fg">
       Production software, used by real people.
     </h2>
@@ -27,34 +27,64 @@ import { caseStudies } from "../content";
               </div>
 
               <div class="md:col-span-6">
-                <p class="eyebrow">{cs.clientName}</p>
-                <blockquote class="mt-5 display text-[clamp(24px,2.4vw,34px)] text-fg leading-[1.15]">
-                  "{cs.quote}"
-                </blockquote>
-                <p class="mt-4 text-[14px] uppercase tracking-eyebrow text-muted">
-                  {cs.attribution}
+                <p class="eyebrow">{cs.tagline}</p>
+                <h3 class="display mt-4 text-[clamp(26px,3vw,40px)] text-fg leading-[1.05]">
+                  {cs.clientName}
+                </h3>
+                <p class="mt-5 text-[16px] md:text-[17px] leading-[1.6] text-fg/80">
+                  {cs.description}
                 </p>
+
+                {cs.stack && cs.stack.length > 0 && (
+                  <ul class="mt-6 flex flex-wrap gap-2">
+                    {cs.stack.map((s) => (
+                      <li class="rounded-full border border-line bg-bg-alt px-3 py-1 text-[12px] font-medium tracking-tight text-fg/80">
+                        {s}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                <blockquote class="mt-8 display text-[clamp(20px,2vw,26px)] text-fg leading-[1.25] border-l-2 border-fg/30 pl-5">
+                  "{cs.quote}"
+                  <footer class="mt-3 text-[12px] uppercase tracking-eyebrow text-muted not-italic">
+                    {cs.attribution}
+                  </footer>
+                </blockquote>
 
                 <dl class="mt-8 grid grid-cols-3 gap-4 border-t border-line pt-6">
                   {cs.stats.map((s) => (
                     <div>
-                      <dt class="display text-[clamp(24px,3vw,40px)] text-fg leading-[1]">
+                      <dt class="display text-[clamp(22px,2.6vw,34px)] text-fg leading-[1]">
                         {s.value}
                       </dt>
-                      <dd class="mt-2 text-[12px] uppercase tracking-eyebrow text-muted">
+                      <dd class="mt-2 text-[11px] uppercase tracking-eyebrow text-muted">
                         {s.label}
                       </dd>
                     </div>
                   ))}
                 </dl>
 
-                <a
-                  href={cs.href}
-                  class="mt-8 inline-flex items-center gap-2 text-[14px] font-medium text-fg border-b border-fg/40 pb-1 transition-colors hover:border-fg"
-                >
-                  View case study
-                  <span aria-hidden="true">→</span>
-                </a>
+                <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+                  {cs.press && (
+                    <a
+                      href={cs.press.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="inline-flex items-center gap-2 text-[13px] uppercase tracking-eyebrow text-fg/70 border-b border-fg/30 pb-1 transition-colors hover:text-fg hover:border-fg"
+                    >
+                      {cs.press.label}
+                      <span aria-hidden="true">↗</span>
+                    </a>
+                  )}
+                  <a
+                    href={cs.href}
+                    class="inline-flex items-center gap-2 text-[14px] font-medium text-fg border-b border-fg/40 pb-1 transition-colors hover:border-fg"
+                  >
+                    View case study
+                    <span aria-hidden="true">→</span>
+                  </a>
+                </div>
               </div>
             </article>
           );

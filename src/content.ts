@@ -55,36 +55,44 @@ export const advisors: Advisor[] = [
 
 export type CaseStudy = {
   clientName: string;
+  tagline: string;
+  description: string;
   quote: string;
   attribution: string;
   stats: { value: string; label: string }[];
+  stack?: string[];
+  press?: { label: string; href: string };
   imageAlt: string;
   href: string;
 };
 
 export const caseStudies: CaseStudy[] = [
   {
-    clientName: "Client Name #1",
-    quote: "[Pull quote from client]",
-    attribution: "[Client role]",
+    clientName: "Refettorio Harlem",
+    tagline: "Community kitchen — Harlem, NYC",
+    description:
+      "WhatsApp logging bot and offline-capable tablet check-in app for a Harlem community kitchen. Replaces manual paper tracking with structured data pipelines writing to a shared Google Sheets backend.",
+    quote: "[Pull quote from Refettorio team — TODO]",
+    attribution: "[Client role — TODO]",
     stats: [
-      { value: "Stat 1", label: "label" },
-      { value: "Stat 2", label: "label" },
-      { value: "Stat 3", label: "label" },
+      { value: "<15s", label: "guest check-in" },
+      { value: "4", label: "Sheets tabs synced" },
+      { value: "Offline", label: "queue + retry" },
     ],
-    imageAlt: "Project screenshot — client #1",
-    href: "#",
-  },
-  {
-    clientName: "Client Name #2",
-    quote: "[Pull quote from client]",
-    attribution: "[Client role]",
-    stats: [
-      { value: "Stat 1", label: "label" },
-      { value: "Stat 2", label: "label" },
-      { value: "Stat 3", label: "label" },
+    stack: [
+      "Node.js",
+      "Express",
+      "Twilio API",
+      "React",
+      "Google Sheets API",
+      "IndexedDB",
+      "Railway",
     ],
-    imageAlt: "Project screenshot — client #2",
+    press: {
+      label: "Featured in The New York Times",
+      href: "https://www.nytimes.com/2026/01/22/nyregion/refettorio-harlem-nyc-free-food.html",
+    },
+    imageAlt: "Refettorio Harlem check-in tablet UI",
     href: "#",
   },
 ];
