@@ -56,7 +56,7 @@ export const advisors: Advisor[] = [
   },
   {
     name: "Hadley Callaway",
-    role: "Chief of Staff at Sazabi (YC F26)",
+    role: "Chief of Staff at Sazabi (YC P26)",
     bio: "Previously Software Engineer at Doppel, Brex, and Microsoft.",
     imageAlt: "Hadley Callaway headshot",
     image: "/headshots/1753048604662.jpeg",
