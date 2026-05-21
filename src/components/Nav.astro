@@ -6,6 +6,7 @@ import { nav, hero, WAITLIST_URL } from "../content";
   id="site-nav"
   class="fixed inset-x-0 top-9 z-50 transition-colors duration-200"
   data-mode="top"
+  data-brand="long"
 >
   <div class="container-x flex h-16 items-center justify-between">
     <a
@@ -53,7 +54,7 @@ import { nav, hero, WAITLIST_URL } from "../content";
         target="_blank"
         rel="noopener noreferrer"
         data-nav-cta
-        class="inline-flex items-center gap-1.5 md:gap-2 rounded-full px-3 md:px-4 py-1.5 md:py-2 text-[11px] md:text-[13px] font-medium transition-colors whitespace-nowrap"
+        class="inline-flex items-center gap-1.5 md:gap-2 rounded-full px-3 md:px-4 py-1.5 md:py-2 text-[11px] md:text-[13px] font-medium transition-all duration-200 whitespace-nowrap"
       >
         {hero.primaryCta.label}
         <span class="hidden md:inline" aria-hidden="true">→</span>
@@ -155,6 +156,17 @@ import { nav, hero, WAITLIST_URL } from "../content";
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
   }
+
+  /* Mobile only: hide the CTA pill while the long brand text is
+     showing. Once it scrambles down to "CSS", the CTA fades in. */
+  @media (max-width: 767px) {
+    #site-nav[data-brand="long"] [data-nav-cta] {
+      opacity: 0;
+      transform: scale(0.85);
+      pointer-events: none;
+      visibility: hidden;
+    }
+  }
 </style>
 
 <script>
@@ -240,9 +252,16 @@ import { nav, hero, WAITLIST_URL } from "../content";
     const y = window.scrollY;
     if (y > SCRAMBLE_THRESHOLD && brandState === "long") {
       brandState = "short";
+      // Toggle mobile CTA visibility partway through the scramble so it
+      // fades in alongside the now-compact wordmark instead of sitting
+      // there awkwardly while letters are still scrambling.
+      setTimeout(() => {
+        if (nav && brandState === "short") nav.dataset.brand = "short";
+      }, 500);
       scrambleMorph(LONG, SHORT, 1100);
     } else if (y < 20 && brandState === "short") {
       brandState = "long";
+      if (nav) nav.dataset.brand = "long";
       scrambleMorph(SHORT, LONG, 1200);
     }
   }
