@@ -62,13 +62,12 @@ export type CaseStudy = {
   clientName: string;
   tagline: string;
   description: string;
-  quote: string;
-  attribution: string;
   stats: { value: string; label: string }[];
   stack?: string[];
   press?: { label: string; href: string };
   imageAlt: string;
-  href: string;
+  /** Optional image path under /public, e.g. "/projects/refettorio.jpg". */
+  image?: string | null;
 };
 
 export const caseStudies: CaseStudy[] = [
@@ -77,12 +76,10 @@ export const caseStudies: CaseStudy[] = [
     tagline: "Community kitchen — Harlem, NYC",
     description:
       "WhatsApp logging bot and offline-capable tablet check-in app for a Harlem community kitchen. Replaces manual paper tracking with structured data pipelines writing to a shared Google Sheets backend.",
-    quote: "[Pull quote from Refettorio team — TODO]",
-    attribution: "[Client role — TODO]",
     stats: [
-      { value: "<15s", label: "guest check-in" },
-      { value: "4", label: "Sheets tabs synced" },
-      { value: "Offline", label: "queue + retry" },
+      { value: "700+", label: "guests per week" },
+      { value: "−5s", label: "per customer" },
+      { value: "3", label: "data streams unified" },
     ],
     stack: [
       "Node.js",
@@ -94,11 +91,11 @@ export const caseStudies: CaseStudy[] = [
       "Railway",
     ],
     press: {
-      label: "Featured in The New York Times",
+      label: "Refettorio Harlem in The New York Times",
       href: "https://www.nytimes.com/2026/01/22/nyregion/refettorio-harlem-nyc-free-food.html",
     },
     imageAlt: "Refettorio Harlem check-in tablet UI",
-    href: "#",
+    image: null,
   },
 ];
 

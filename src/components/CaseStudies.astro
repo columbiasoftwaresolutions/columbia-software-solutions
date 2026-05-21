@@ -17,14 +17,22 @@ import { caseStudies } from "../content";
             <article
               class={`grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-center ${reversed ? "md:[&>.media]:order-2" : ""}`}
             >
-              {/* TODO: project screenshot */}
-              <div
-                class="media md:col-span-6 aspect-[4/3] w-full bg-bg-alt border border-line flex items-center justify-center text-[11px] uppercase tracking-eyebrow text-muted"
-                role="img"
-                aria-label={cs.imageAlt}
-              >
-                Placeholder — {cs.imageAlt}
-              </div>
+              {cs.image ? (
+                <img
+                  src={cs.image}
+                  alt={cs.imageAlt}
+                  class="media md:col-span-6 aspect-[4/3] w-full object-cover border border-line"
+                  loading="lazy"
+                />
+              ) : (
+                <div
+                  class="media md:col-span-6 aspect-[4/3] w-full bg-bg-alt border border-line flex items-center justify-center text-[11px] uppercase tracking-eyebrow text-muted"
+                  role="img"
+                  aria-label={cs.imageAlt}
+                >
+                  Placeholder — {cs.imageAlt}
+                </div>
+              )}
 
               <div class="md:col-span-6">
                 <p class="eyebrow">{cs.tagline}</p>
@@ -44,13 +52,6 @@ import { caseStudies } from "../content";
                     ))}
                   </ul>
                 )}
-
-                <blockquote class="mt-8 display text-[clamp(20px,2vw,26px)] text-fg leading-[1.25] border-l-2 border-fg/30 pl-5">
-                  "{cs.quote}"
-                  <footer class="mt-3 text-[12px] uppercase tracking-eyebrow text-muted not-italic">
-                    {cs.attribution}
-                  </footer>
-                </blockquote>
 
                 <dl class="mt-8 grid grid-cols-3 gap-4 border-t border-line pt-6">
                   {cs.stats.map((s) => (
