@@ -1,0 +1,89 @@
+---
+import { caseStudies } from "../content";
+---
+
+<section id="cases" class="reveal py-20 md:py-24 border-b border-line">
+  <div class="container-x">
+    <p class="eyebrow">Case Study — Spring 2026</p>
+    <h2 class="display mt-5 max-w-[18ch] text-[clamp(34px,5vw,64px)] text-fg">
+      Shipped work.
+    </h2>
+
+    <div class="mt-16 space-y-20 md:space-y-28">
+      {
+        caseStudies.map((cs, i) => {
+          const reversed = i % 2 === 1;
+          return (
+            <article
+              class={`grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-center ${reversed ? "md:[&>.media]:order-2" : ""}`}
+            >
+              {cs.image ? (
+                <img
+                  src={cs.image}
+                  alt={cs.imageAlt}
+                  class="media md:col-span-6 w-full h-auto object-contain bg-bg-alt border border-line"
+                  loading="lazy"
+                />
+              ) : (
+                <div
+                  class="media md:col-span-6 aspect-[4/3] w-full bg-bg-alt border border-line flex items-center justify-center text-[11px] uppercase tracking-eyebrow text-muted"
+                  role="img"
+                  aria-label={cs.imageAlt}
+                >
+                  Placeholder — {cs.imageAlt}
+                </div>
+              )}
+
+              <div class="md:col-span-6">
+                <p class="eyebrow">{cs.tagline}</p>
+                <h3 class="display mt-4 text-[clamp(26px,3vw,40px)] text-fg leading-[1.05]">
+                  {cs.clientName}
+                </h3>
+                <p class="mt-5 text-[16px] md:text-[17px] leading-[1.6] text-fg/80">
+                  {cs.description}
+                </p>
+
+                {cs.stack && cs.stack.length > 0 && (
+                  <ul class="mt-6 flex flex-wrap gap-2">
+                    {cs.stack.map((s) => (
+                      <li class="rounded-full border border-line bg-bg-alt px-3 py-1 text-[12px] font-medium tracking-tight text-fg/80">
+                        {s}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                <dl class="mt-8 grid grid-cols-3 gap-4 border-t border-line pt-6">
+                  {cs.stats.map((s) => (
+                    <div>
+                      <dt class="display text-[clamp(22px,2.6vw,34px)] text-fg leading-[1]">
+                        {s.value}
+                      </dt>
+                      <dd class="mt-2 text-[11px] uppercase tracking-eyebrow text-muted">
+                        {s.label}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+
+                {cs.press && (
+                  <div class="mt-8">
+                    <a
+                      href={cs.press.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="inline-flex items-center gap-2 text-[13px] uppercase tracking-eyebrow text-fg/70 border-b border-fg/30 pb-1 transition-colors hover:text-fg hover:border-fg"
+                    >
+                      {cs.press.label}
+                      <span aria-hidden="true">↗</span>
+                    </a>
+                  </div>
+                )}
+              </div>
+            </article>
+          );
+        })
+      }
+    </div>
+  </div>
+</section>

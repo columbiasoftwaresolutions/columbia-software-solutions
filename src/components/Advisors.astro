@@ -1,0 +1,32 @@
+---
+import { advisors } from "../content";
+import Headshot from "./Headshot.astro";
+---
+
+<section id="advisors" class="reveal py-20 md:py-24 border-b border-line">
+  <div class="container-x">
+    <p class="eyebrow">Advisory Board</p>
+    <h2 class="display mt-5 max-w-[18ch] text-[clamp(34px,5vw,64px)] text-fg">
+      Advisors.
+    </h2>
+    <p class="mt-6 max-w-[56ch] text-[17px] md:text-[18px] leading-[1.55] text-muted">
+      Senior operators from venture, AI, and B2B SaaS. They review scope
+      and code with us.
+    </p>
+
+    <ul class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-8">
+      {
+        advisors.map((a) => (
+          <li class="flex flex-col">
+            <Headshot name={a.name} src={a.image} alt={a.imageAlt} aspect="4/5" />
+            <h3 class="display mt-5 text-[22px] text-fg">{a.name}</h3>
+            <p class="mt-1 text-[11px] uppercase tracking-eyebrow text-muted">
+              {a.role}
+            </p>
+            <p class="mt-3 text-[14px] leading-[1.55] text-fg/75 max-w-[40ch]">{a.bio}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

@@ -1,0 +1,35 @@
+---
+import { WAITLIST_URL } from "../content";
+---
+
+<section id="join" class="reveal py-20 md:py-24 border-b border-line">
+  <div class="container-x">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-10">
+      <div class="md:col-span-6">
+        <p class="eyebrow">For Columbia students</p>
+        <h2
+          class="display mt-5 text-[clamp(32px,4.2vw,56px)] text-fg max-w-[14ch]"
+        >
+          For students.
+        </h2>
+      </div>
+
+      <div class="md:col-span-6 md:pt-3">
+        <p class="text-[17px] md:text-[18px] leading-[1.6] text-fg/85">
+          You're paired with a 3–4 person team and an advisor from BCV,
+          OpenAI, or HBS. You ship a deployed product in 1–2 months.
+        </p>
+
+        <a
+          href={WAITLIST_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-primary mt-9"
+        >
+          Join the Fall 2026 waitlist
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,295 @@
+---
+import { nav, hero, WAITLIST_URL } from "../content";
+---
+
+<header
+  id="site-nav"
+  class="fixed inset-x-0 top-9 z-50 transition-colors duration-200"
+  data-mode="top"
+>
+  <div class="container-x flex h-16 items-center justify-between">
+    <a
+      href="#top"
+      class="flex items-center gap-2.5 font-display text-[16px] md:text-[18px] font-semibold uppercase tracking-[0.02em] leading-none"
+      data-nav-link
+      aria-label="Columbia Software Solutions home"
+    >
+      <img
+        src="/logo.png"
+        alt=""
+        width="32"
+        height="32"
+        class="nav-lion"
+        aria-hidden="true"
+      />
+      <span
+        id="brand-text"
+        data-long="Columbia Software Solutions"
+        data-short="CSS"
+        class="brand-text"
+      >Columbia Software Solutions</span>
+    </a>
+
+    <div class="flex items-center gap-8">
+      <nav
+        class="hidden items-center gap-7 md:flex"
+        aria-label="Primary navigation"
+      >
+        {
+          nav.links.map((link) => (
+            <a
+              href={link.href}
+              data-nav-link
+              class="text-[14px] transition-colors"
+            >
+              {link.label}
+            </a>
+          ))
+        }
+      </nav>
+
+      <a
+        href={WAITLIST_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-nav-cta
+        class="inline-flex items-center gap-2 rounded-full px-4 py-2 text-[13px] font-medium transition-colors"
+      >
+        {hero.primaryCta.label}
+        <span aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<style>
+  .nav-lion {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    display: block;
+  }
+
+  /* Brand text uses tabular numerals + a fixed-width cap so the
+     scramble doesn't cause layout jitter. */
+  .brand-text {
+    display: inline-block;
+    white-space: nowrap;
+    will-change: contents;
+  }
+
+  /* Three states:
+     "top"  -> transparent, sits invisibly on dark hero (page not scrolled)
+     "hero" -> light beige (scrolled but still on hero — inverts over dark)
+     "page" -> dark blackish (scrolled past hero — inverts over light content) */
+
+  /* TOP: page at scrollY=0. No bar bg; nav reads as white text on hero. */
+  #site-nav[data-mode="top"] {
+    background: transparent;
+    border-bottom: 1px solid transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  #site-nav[data-mode="top"] [data-nav-link] {
+    color: rgba(255, 255, 255, 0.85);
+  }
+  #site-nav[data-mode="top"] [data-nav-link]:hover {
+    color: #ffffff;
+  }
+  #site-nav[data-mode="top"] [data-nav-cta] {
+    background: #ffffff;
+    color: var(--hero-bg);
+  }
+  #site-nav[data-mode="top"] [data-nav-cta]:hover {
+    background: rgba(255, 255, 255, 0.9);
+  }
+
+  /* HERO: scrolled a bit, still over hero -> LIGHT beige nav */
+  #site-nav[data-mode="hero"] {
+    background: rgba(230, 227, 224, 0.94);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  #site-nav[data-mode="hero"] [data-nav-link] {
+    color: rgba(30, 30, 30, 0.7);
+  }
+  #site-nav[data-mode="hero"] [data-nav-link]:hover {
+    color: var(--fg);
+  }
+  #site-nav[data-mode="hero"] [data-nav-cta] {
+    background: var(--fg);
+    color: var(--bg);
+  }
+  #site-nav[data-mode="hero"] [data-nav-cta]:hover {
+    background: rgba(30, 30, 30, 0.86);
+  }
+
+  /* Page mode: scrolled past hero -> DARK blackish nav */
+  #site-nav[data-mode="page"] {
+    background: rgba(22, 22, 22, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  #site-nav[data-mode="page"] [data-nav-link] {
+    color: rgba(255, 255, 255, 0.7);
+  }
+  #site-nav[data-mode="page"] [data-nav-link]:hover {
+    color: #ffffff;
+  }
+  #site-nav[data-mode="page"] [data-nav-cta] {
+    background: #ffffff;
+    color: var(--fg);
+  }
+  #site-nav[data-mode="page"] [data-nav-cta]:hover {
+    background: rgba(255, 255, 255, 0.9);
+  }
+
+  /* MERGE: a dark section (e.g. FinalCTA) sits under the nav.
+     Drop the glass + border so the nav reads as one continuous
+     dark surface with the section below it. */
+  #site-nav[data-merge="true"] {
+    background: var(--hero-bg) !important;
+    border-bottom-color: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+</style>
+
+<script>
+  const nav = document.getElementById("site-nav");
+  const brand = document.getElementById("brand-text") as HTMLElement | null;
+  const LONG = brand?.dataset.long ?? "Columbia Software Solutions";
+  const SHORT = brand?.dataset.short ?? "CSS";
+  const SCRAMBLE_THRESHOLD = 80;
+
+  const update = () => {
+    if (!nav) return;
+    const y = window.scrollY;
+    const pageThreshold = Math.min(window.innerHeight * 0.6, 500);
+    if (y > pageThreshold) {
+      nav.dataset.mode = "page";
+    } else if (y > 12) {
+      nav.dataset.mode = "hero";
+    } else {
+      nav.dataset.mode = "top";
+    }
+  };
+
+  // -----------------------------------------------------------------
+  // Brand-text scramble. As the user scrolls past SCRAMBLE_THRESHOLD,
+  // the wordmark morphs from "Columbia Software Solutions" -> "CSS"
+  // by scrambling chars and shrinking length. Reverses on scroll back.
+  // -----------------------------------------------------------------
+  const GLYPHS = "@#%&$+*/={}<>?~!|^";
+  let brandState: "long" | "short" = "long";
+  let animFrame = 0;
+
+  function scrambleMorph(
+    from: string,
+    to: string,
+    duration: number,
+    onDone?: () => void,
+  ) {
+    if (!brand) return;
+    const startTime = performance.now();
+    const localFrame = ++animFrame;
+    const fromLen = from.length;
+    const toLen = to.length;
+
+    const tick = (now: number) => {
+      // If another animation has started, abort this one.
+      if (localFrame !== animFrame) return;
+      const t = Math.min((now - startTime) / duration, 1);
+
+      if (t < 1) {
+        const len = Math.max(
+          toLen,
+          Math.round(fromLen + (toLen - fromLen) * t),
+        );
+        const out: string[] = [];
+        for (let i = 0; i < len; i++) {
+          if (t > 0.78 && i < toLen) {
+            out.push(to[i]!);
+          } else if (t > 0.32) {
+            out.push(GLYPHS[Math.floor(Math.random() * GLYPHS.length)]!);
+          } else {
+            // Mostly original, with rising probability of scramble.
+            const scrambleChance = t / 0.32;
+            if (Math.random() < scrambleChance) {
+              out.push(GLYPHS[Math.floor(Math.random() * GLYPHS.length)]!);
+            } else {
+              out.push(from[i] ?? " ");
+            }
+          }
+        }
+        brand.textContent = out.join("");
+        requestAnimationFrame(tick);
+      } else {
+        brand.textContent = to;
+        onDone?.();
+      }
+    };
+
+    requestAnimationFrame(tick);
+  }
+
+  function checkBrand() {
+    if (!brand) return;
+    const y = window.scrollY;
+    if (y > SCRAMBLE_THRESHOLD && brandState === "long") {
+      brandState = "short";
+      scrambleMorph(LONG, SHORT, 650);
+    } else if (y < 20 && brandState === "short") {
+      brandState = "long";
+      scrambleMorph(SHORT, LONG, 700);
+    }
+  }
+
+  // -----------------------------------------------------------------
+  // Merge: when a [data-nav-merge="true"] section sits directly
+  // under the nav, drop the glass + border so the nav visually
+  // fuses with the section. Uses scroll-based geometry check
+  // (more predictable than IO at the exact nav-bottom seam).
+  // -----------------------------------------------------------------
+  const checkMerge = () => {
+    if (!nav) return;
+    const targets = document.querySelectorAll<HTMLElement>(
+      '[data-nav-merge="true"]',
+    );
+    const navBottom = nav.getBoundingClientRect().bottom;
+    let merging = false;
+    for (const t of targets) {
+      const rect = t.getBoundingClientRect();
+      // Section's top is at or above nav bottom AND section's bottom is
+      // still below nav bottom -> section currently sits behind the nav.
+      if (rect.top <= navBottom && rect.bottom > navBottom) {
+        merging = true;
+        break;
+      }
+    }
+    nav.dataset.merge = merging ? "true" : "false";
+  };
+
+  update();
+  checkBrand();
+  checkMerge();
+  window.addEventListener(
+    "scroll",
+    () => {
+      update();
+      checkBrand();
+      checkMerge();
+    },
+    { passive: true },
+  );
+  window.addEventListener("resize", checkMerge, { passive: true });
+  document.addEventListener("astro:after-swap", () => {
+    update();
+    brandState = "long";
+    if (brand) brand.textContent = LONG;
+    checkBrand();
+    checkMerge();
+  });
+</script>
