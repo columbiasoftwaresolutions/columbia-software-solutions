@@ -95,7 +95,7 @@ export const caseStudies: CaseStudy[] = [
       href: "https://www.nytimes.com/2026/01/22/nyregion/refettorio-harlem-nyc-free-food.html",
     },
     imageAlt: "Refettorio Harlem check-in tablet UI",
-    image: "/projects/Screenshot 2026-05-20 at 11.08.53 PM.png",
+    image: "/projects/refettorio.png",
   },
 ];
 
