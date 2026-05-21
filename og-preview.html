@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>OG preview — screenshot at 1200x630</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      html, body {
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+      }
+
+      body {
+        background: #161616;
+        color: #f9f9f9;
+        font-family: "Geist", -apple-system, sans-serif;
+        position: relative;
+        padding: 72px 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      /* Faint dot-grid backdrop matching the hero scene */
+      .dots {
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(rgba(255,255,255,0.10) 1.4px, transparent 1.4px);
+        background-size: 32px 32px;
+        opacity: 0.6;
+        pointer-events: none;
+      }
+
+      /* Soft electric-blue glow center-right */
+      .glow {
+        position: absolute;
+        right: -120px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 720px;
+        height: 720px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(13, 60, 252, 0.32) 0%,
+          rgba(13, 60, 252, 0.0) 60%
+        );
+        pointer-events: none;
+      }
+
+      .top {
+        position: relative;
+        z-index: 2;
+      }
+
+      .eyebrow {
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 16px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.55);
+        margin-bottom: 10px;
+      }
+
+      .brand {
+        font-family: "Geist", sans-serif;
+        font-weight: 600;
+        font-size: 22px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        color: #ffffff;
+      }
+
+      .lion {
+        position: absolute;
+        top: 56px;
+        right: 80px;
+        width: 84px;
+        height: 84px;
+        z-index: 3;
+      }
+
+      .headline {
+        position: relative;
+        z-index: 2;
+        font-family: "Geist", sans-serif;
+        font-weight: 500;
+        font-size: 124px;
+        line-height: 0.96;
+        letter-spacing: -0.045em;
+        color: #ffffff;
+        max-width: 920px;
+      }
+
+      .footer-row {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 16px;
+        color: rgba(255, 255, 255, 0.55);
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        padding-top: 22px;
+        letter-spacing: 0.5px;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(13, 60, 252, 0.95);
+        color: #ffffff;
+        font-family: "Geist", sans-serif;
+        font-weight: 500;
+        font-size: 16px;
+        padding: 10px 18px;
+        border-radius: 999px;
+        letter-spacing: 0;
+      }
+
+      .domain {
+        font-weight: 500;
+        color: rgba(255,255,255,0.7);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="dots"></div>
+    <div class="glow"></div>
+
+    <img class="lion" src="/Users/ethanzhang/css/columbia-software-solutions/public/logo.png" alt="" />
+
+    <div class="top">
+      <div class="eyebrow">Columbia Software Solutions</div>
+      <div class="brand">Free for NYC nonprofits & small businesses</div>
+    </div>
+
+    <h1 class="headline">Free software<br/>for NYC.</h1>
+
+    <div class="footer-row">
+      <span class="domain">columbiasoftwaresolutions.com</span>
+      <span class="pill">Fall 2026 waitlist is open →</span>
+    </div>
+  </body>
+</html>
