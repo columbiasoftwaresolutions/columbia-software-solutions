@@ -59,15 +59,13 @@ import { ctas } from "../content";
     background: var(--hero-bg);
     z-index: 30;
     pointer-events: none;
-    /* Origin at the bottom edge of the viewport — the dark rises up
-       from below when entering, and sinks back down when exiting. */
+    /* Origin at the bottom — dark grows up from below, sinks back down. */
     transform-origin: center bottom;
     transform: scaleY(0);
-    transition: transform 800ms cubic-bezier(0.22, 0.61, 0.24, 1);
+    /* Short transition only — main motion comes from scroll-tied
+       progress in JS, so fast scrolls track 1:1 without queuing. */
+    transition: transform 120ms linear;
     will-change: transform;
-  }
-  .cta-fill.is-on {
-    transform: scaleY(1);
   }
 
   /* The section sits above the fill so its content is always visible. */
@@ -95,16 +93,42 @@ import { ctas } from "../content";
   const nav = document.getElementById("site-nav");
   const section = document.querySelector(".cta-section") as HTMLElement | null;
 
-  const check = () => {
+  // Scroll-tied progress: scaleY tracks how much of the FinalCTA
+  // section has entered the viewport. No queued long animations,
+  // so fast scrolls map 1:1 instead of glitching.
+  //
+  // Progress curve:
+  //   section.top >= 70% of viewport -> 0 (still mostly below)
+  //   section.top <= 10% of viewport -> 1 (fully filling area)
+  //   linearly interpolated in between
+  let ticking = false;
+
+  const apply = () => {
+    ticking = false;
     if (!fill || !section) return;
     const rect = section.getBoundingClientRect();
     const vh = window.innerHeight;
-    // Active once the section is meaningfully in view — its top has
-    // crossed below the midpoint of the viewport (i.e., user has
-    // scrolled near the bottom of the page).
-    const active = rect.top < vh * 0.55 && rect.bottom > 0;
-    fill.classList.toggle("is-on", active);
-    if (nav) nav.dataset.merge = active ? "true" : "false";
+    const startY = vh * 0.7;
+    const endY = vh * 0.1;
+
+    let progress = 0;
+    if (rect.top <= endY) {
+      progress = 1;
+    } else if (rect.top < startY) {
+      progress = (startY - rect.top) / (startY - endY);
+    }
+    if (rect.bottom < 0) progress = 0;
+    if (progress < 0) progress = 0;
+    if (progress > 1) progress = 1;
+
+    fill.style.transform = `scaleY(${progress.toFixed(4)})`;
+    if (nav) nav.dataset.merge = progress > 0.5 ? "true" : "false";
+  };
+
+  const check = () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(apply);
   };
 
   check();
