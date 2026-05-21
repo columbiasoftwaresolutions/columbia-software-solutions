@@ -2,37 +2,38 @@
 import { ctas } from "../content";
 ---
 
-<!-- Fixed full-viewport dark fill that grows in when FinalCTA enters
-     the viewport. Sits behind the section content (z-index 30) but
-     above all other page sections (z auto) so it visually covers the
-     light Team section above and Footer below as it grows. -->
-<div id="cta-fill" class="cta-fill" aria-hidden="true"></div>
-
+<!-- Scroll anchor — invisible, just gives the page enough height so
+     scrolling here triggers the fill animation. The actual visual
+     (dark bg + content) is the fixed .cta-fill below. -->
 <section
-  class="reveal cta-section relative isolate bg-hero-bg text-hero-fg py-20 md:py-28"
+  class="cta-anchor relative"
+  aria-label="Final call to action"
   data-nav-merge="true"
->
-  <div class="container-x relative z-10">
-    <div class="cta-content">
-      <p class="eyebrow !text-white/55">Build with us</p>
-      <h2
-        class="display mt-5 text-[clamp(44px,7vw,96px)] text-white max-w-[18ch]"
-      >
-        {ctas.final.headline}
-      </h2>
-      <p class="mt-6 max-w-[60ch] text-[17px] md:text-[19px] text-white/80">
-        {ctas.final.subhead}
-      </p>
-      <a href={ctas.final.cta.href} class="btn-light mt-9">
-        {ctas.final.cta.label}
-        <span class="arrow" aria-hidden="true">→</span>
-      </a>
-    </div>
+></section>
+
+<!-- Fixed dark fill + content. Sits behind the nav (z-30) and above
+     other page sections. scaleY tied to scroll progress, content
+     fades + slides up tied to the same progress. -->
+<div id="cta-fill" class="cta-fill" aria-hidden="false">
+  <div class="container-x cta-content">
+    <p class="eyebrow !text-white/55">Build with us</p>
+    <h2
+      class="display mt-5 text-[clamp(44px,7vw,96px)] text-white max-w-[18ch]"
+    >
+      {ctas.final.headline}
+    </h2>
+    <p class="mt-6 max-w-[60ch] text-[17px] md:text-[19px] text-white/80">
+      {ctas.final.subhead}
+    </p>
+    <a href={ctas.final.cta.href} class="btn-light mt-9">
+      {ctas.final.cta.label}
+      <span class="arrow" aria-hidden="true">→</span>
+    </a>
   </div>
 
   <!-- Subtle dot grid backdrop -->
   <svg
-    class="absolute inset-0 -z-0 h-full w-full opacity-25"
+    class="cta-dots"
     aria-hidden="true"
   >
     <defs>
@@ -49,40 +50,59 @@ import { ctas } from "../content";
     </defs>
     <rect width="100%" height="100%" fill="url(#dot-grid)"></rect>
   </svg>
-</section>
+</div>
 
 <style>
+  /* Anchor: takes ~120vh in the document so the user must scroll
+     through it. The fill animation runs across this range. */
+  .cta-anchor {
+    height: 120vh;
+    background: transparent;
+  }
+
   .cta-fill {
     position: fixed;
     left: 0;
     right: 0;
-    top: 0;
     bottom: 0;
+    height: 100vh;
     background: var(--hero-bg);
     z-index: 30;
     pointer-events: none;
-    /* Origin at the bottom — dark grows up from below, sinks back down. */
+    overflow: hidden;
+    /* Origin at the bottom so the dark rises up from below. */
     transform-origin: center bottom;
     transform: scaleY(0);
-    /* Short transition only — main motion comes from scroll-tied
-       progress in JS, so fast scrolls track 1:1 without queuing. */
+    /* Smooth per-frame jitter; the main motion is scroll-driven. */
     transition: transform 120ms linear;
     will-change: transform;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
-  /* The section sits above the fill so its content is always visible. */
-  .cta-section {
-    z-index: 40;
-  }
-
-  /* Content fades + slides up as the fill grows. Tied to scroll
-     progress in JS via CSS custom property --p (0..1). */
+  /* Content fades + slides as --p approaches 1. CTA button gets
+     pointer-events back when fully expanded. */
   .cta-content {
     --p: 0;
-    opacity: calc(max(0, (var(--p) - 0.45)) * 1.8);
-    transform: translateY(calc((1 - var(--p)) * 24px));
+    position: relative;
+    z-index: 2;
+    opacity: calc(max(0, (var(--p) - 0.55)) * 2.3);
+    transform: translateY(calc((1 - var(--p)) * 28px));
     transition: opacity 200ms linear, transform 200ms linear;
     will-change: opacity, transform;
+  }
+  .cta-fill[data-on="true"] .cta-content {
+    pointer-events: auto;
+  }
+
+  .cta-dots {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: calc(var(--p, 0) * 0.4);
+    pointer-events: none;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -91,61 +111,62 @@ import { ctas } from "../content";
       transform: scaleY(1);
       opacity: 0;
     }
-    .cta-fill.is-on {
+    .cta-fill[data-on="true"] {
       opacity: 1;
+    }
+    .cta-content {
+      opacity: 1;
+      transform: none;
     }
   }
 </style>
 
 <script>
-  // Activate the dark fill when the FinalCTA section is "behind" the
-  // nav (its top has scrolled above the nav's bottom). Same trigger
-  // as the nav merge, kept here so this component owns its visual.
+  // Scroll-tied progress: scaleY tracks how far into the anchor the
+  // user has scrolled. Two phases:
+  //   Phase 1 — anchor enters viewport -> thin black bar (5% height)
+  //   Phase 2 — anchor advances toward middle -> bar grows to full
+  // Fast scrolls map 1:1 (no queued long transition), no glitching.
   const fill = document.getElementById("cta-fill");
   const nav = document.getElementById("site-nav");
-  const section = document.querySelector(".cta-section") as HTMLElement | null;
-
-  // Scroll-tied progress: scaleY tracks FinalCTA's viewport position
-  // through two phases:
-  //   Phase 1 — section starts entering -> thin black bar (5% height)
-  //   Phase 2 — section advances toward center -> bar grows to full
-  // Fast scrolls map 1:1 (no queued transition), so no glitch.
+  const anchor = document.querySelector(".cta-anchor") as HTMLElement | null;
+  const content = fill?.querySelector(".cta-content") as HTMLElement | null;
+  const dots = fill?.querySelector(".cta-dots") as HTMLElement | null;
   const BAR_MIN = 0.05;
-  const content = section?.querySelector<HTMLElement>(".cta-content") ?? null;
   let ticking = false;
 
   const apply = () => {
     ticking = false;
-    if (!fill || !section) return;
-    const rect = section.getBoundingClientRect();
+    if (!fill || !anchor) return;
+    const rect = anchor.getBoundingClientRect();
     const vh = window.innerHeight;
 
-    // Anchor points: when section.top hits each, what progress?
-    const ENTER = vh * 1.0;   // 0
-    const BAR   = vh * 0.5;   // BAR_MIN (thin bar visible)
-    const FULL  = vh * 0.1;   // 1 (full)
+    const ENTER = vh * 1.0; // anchor.top here -> progress 0
+    const BAR = vh * 0.55; // anchor.top here -> progress BAR_MIN
+    const FULL = vh * 0.0; // anchor.top here -> progress 1
 
     let progress = 0;
     if (rect.top >= ENTER) {
       progress = 0;
     } else if (rect.top >= BAR) {
-      // Phase 1: 0 -> BAR_MIN
       const t = (ENTER - rect.top) / (ENTER - BAR);
       progress = t * BAR_MIN;
     } else if (rect.top > FULL) {
-      // Phase 2: BAR_MIN -> 1
       const t = (BAR - rect.top) / (BAR - FULL);
       progress = BAR_MIN + (1 - BAR_MIN) * Math.max(0, Math.min(1, t));
     } else {
       progress = 1;
     }
+    // Once the anchor has scrolled off (its bottom above viewport),
+    // collapse back to 0 so the footer is visible.
     if (rect.bottom < 0) progress = 0;
-    if (progress < 0) progress = 0;
-    if (progress > 1) progress = 1;
+    progress = Math.max(0, Math.min(1, progress));
 
     fill.style.transform = `scaleY(${progress.toFixed(4)})`;
+    fill.dataset.on = progress > 0.6 ? "true" : "false";
     if (content) content.style.setProperty("--p", progress.toFixed(4));
-    if (nav) nav.dataset.merge = progress > 0.5 ? "true" : "false";
+    if (dots) dots.style.setProperty("--p", progress.toFixed(4));
+    if (nav) nav.dataset.merge = progress > 0.55 ? "true" : "false";
   };
 
   const check = () => {
