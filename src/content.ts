@@ -43,14 +43,14 @@ export const advisors: Advisor[] = [
   {
     name: "Kevin Zhang",
     role: "Partner at Bain Capital Ventures",
-    bio: "Previously SWE at OpenAI. Founder of Explo.",
+    bio: "Co-founder of Columbia in Tech.",
     imageAlt: "Kevin Zhang headshot",
     image: "/headshots/1725656181053.jpeg",
   },
   {
     name: "Gary Lin",
-    role: "OpenAI",
-    bio: "Building at the frontier of applied AI.",
+    role: "Founder, Explo",
+    bio: "Previously SWE at OpenAI.",
     imageAlt: "Gary Lin headshot",
     image: "/headshots/1670107191155.jpeg",
   },
