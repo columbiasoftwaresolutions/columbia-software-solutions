@@ -25,7 +25,7 @@ export const hero = {
   eyebrow: null,
   headline: "Free software for NYC.",
   subhead:
-    "Columbia Software Solutions: a student consulting club building free software for NYC nonprofits and small businesses. Founded 2026. Two clients shipped. Advisors from Bain Capital Ventures, OpenAI, and Harvard Business School.",
+    "Columbia Software Solutions: a student consulting club building free software for NYC nonprofits and small businesses. Founded 2026. One client shipped. Advisors from Bain Capital Ventures, OpenAI, and Harvard Business School.",
   primaryCta: { label: "Join the waitlist", href: WAITLIST_URL },
   ghostCta: { label: "Work with us", href: CONTACT_URL },
 };
