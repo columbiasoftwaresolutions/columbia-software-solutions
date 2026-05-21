@@ -13,19 +13,21 @@ import { ctas } from "../content";
   data-nav-merge="true"
 >
   <div class="container-x relative z-10">
-    <p class="eyebrow !text-white/55">Build with us</p>
-    <h2
-      class="display mt-5 text-[clamp(44px,7vw,96px)] text-white max-w-[18ch]"
-    >
-      {ctas.final.headline}
-    </h2>
-    <p class="mt-6 max-w-[60ch] text-[17px] md:text-[19px] text-white/80">
-      {ctas.final.subhead}
-    </p>
-    <a href={ctas.final.cta.href} class="btn-light mt-9">
-      {ctas.final.cta.label}
-      <span class="arrow" aria-hidden="true">→</span>
-    </a>
+    <div class="cta-content">
+      <p class="eyebrow !text-white/55">Build with us</p>
+      <h2
+        class="display mt-5 text-[clamp(44px,7vw,96px)] text-white max-w-[18ch]"
+      >
+        {ctas.final.headline}
+      </h2>
+      <p class="mt-6 max-w-[60ch] text-[17px] md:text-[19px] text-white/80">
+        {ctas.final.subhead}
+      </p>
+      <a href={ctas.final.cta.href} class="btn-light mt-9">
+        {ctas.final.cta.label}
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
   </div>
 
   <!-- Subtle dot grid backdrop -->
@@ -73,6 +75,16 @@ import { ctas } from "../content";
     z-index: 40;
   }
 
+  /* Content fades + slides up as the fill grows. Tied to scroll
+     progress in JS via CSS custom property --p (0..1). */
+  .cta-content {
+    --p: 0;
+    opacity: calc(max(0, (var(--p) - 0.45)) * 1.8);
+    transform: translateY(calc((1 - var(--p)) * 24px));
+    transition: opacity 200ms linear, transform 200ms linear;
+    will-change: opacity, transform;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .cta-fill {
       transition: opacity 200ms ease;
@@ -93,14 +105,13 @@ import { ctas } from "../content";
   const nav = document.getElementById("site-nav");
   const section = document.querySelector(".cta-section") as HTMLElement | null;
 
-  // Scroll-tied progress: scaleY tracks how much of the FinalCTA
-  // section has entered the viewport. No queued long animations,
-  // so fast scrolls map 1:1 instead of glitching.
-  //
-  // Progress curve:
-  //   section.top >= 70% of viewport -> 0 (still mostly below)
-  //   section.top <= 10% of viewport -> 1 (fully filling area)
-  //   linearly interpolated in between
+  // Scroll-tied progress: scaleY tracks FinalCTA's viewport position
+  // through two phases:
+  //   Phase 1 — section starts entering -> thin black bar (5% height)
+  //   Phase 2 — section advances toward center -> bar grows to full
+  // Fast scrolls map 1:1 (no queued transition), so no glitch.
+  const BAR_MIN = 0.05;
+  const content = section?.querySelector<HTMLElement>(".cta-content") ?? null;
   let ticking = false;
 
   const apply = () => {
@@ -108,20 +119,32 @@ import { ctas } from "../content";
     if (!fill || !section) return;
     const rect = section.getBoundingClientRect();
     const vh = window.innerHeight;
-    const startY = vh * 0.7;
-    const endY = vh * 0.1;
+
+    // Anchor points: when section.top hits each, what progress?
+    const ENTER = vh * 1.0;   // 0
+    const BAR   = vh * 0.5;   // BAR_MIN (thin bar visible)
+    const FULL  = vh * 0.1;   // 1 (full)
 
     let progress = 0;
-    if (rect.top <= endY) {
+    if (rect.top >= ENTER) {
+      progress = 0;
+    } else if (rect.top >= BAR) {
+      // Phase 1: 0 -> BAR_MIN
+      const t = (ENTER - rect.top) / (ENTER - BAR);
+      progress = t * BAR_MIN;
+    } else if (rect.top > FULL) {
+      // Phase 2: BAR_MIN -> 1
+      const t = (BAR - rect.top) / (BAR - FULL);
+      progress = BAR_MIN + (1 - BAR_MIN) * Math.max(0, Math.min(1, t));
+    } else {
       progress = 1;
-    } else if (rect.top < startY) {
-      progress = (startY - rect.top) / (startY - endY);
     }
     if (rect.bottom < 0) progress = 0;
     if (progress < 0) progress = 0;
     if (progress > 1) progress = 1;
 
     fill.style.transform = `scaleY(${progress.toFixed(4)})`;
+    if (content) content.style.setProperty("--p", progress.toFixed(4));
     if (nav) nav.dataset.merge = progress > 0.5 ? "true" : "false";
   };
 
