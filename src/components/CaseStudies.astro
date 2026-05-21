@@ -65,8 +65,8 @@ import { caseStudies } from "../content";
                   ))}
                 </dl>
 
-                <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
-                  {cs.press && (
+                {cs.press && (
+                  <div class="mt-8">
                     <a
                       href={cs.press.href}
                       target="_blank"
@@ -76,15 +76,8 @@ import { caseStudies } from "../content";
                       {cs.press.label}
                       <span aria-hidden="true">↗</span>
                     </a>
-                  )}
-                  <a
-                    href={cs.href}
-                    class="inline-flex items-center gap-2 text-[14px] font-medium text-fg border-b border-fg/40 pb-1 transition-colors hover:border-fg"
-                  >
-                    View case study
-                    <span aria-hidden="true">→</span>
-                  </a>
-                </div>
+                  </div>
+                )}
               </div>
             </article>
           );

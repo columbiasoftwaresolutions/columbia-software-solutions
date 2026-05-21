@@ -4,8 +4,8 @@
  * digging into components.
  */
 
-export const WAITLIST_URL = "#waitlist";
-export const CLIENT_EMAIL = "team@columbiasoftwaresolutions.com";
+export const WAITLIST_URL = "https://forms.gle/29V5X5qWiGPV71WHA";
+export const CLIENT_EMAIL = "cusoftwaresolutions@gmail.com";
 
 export const nav = {
   links: [

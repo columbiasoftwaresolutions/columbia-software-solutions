@@ -25,7 +25,12 @@ import { ctas } from "../content";
     <p class="mt-6 max-w-[60ch] text-[17px] md:text-[19px] text-white/80">
       {ctas.final.subhead}
     </p>
-    <a href={ctas.final.cta.href} class="btn-light mt-9">
+    <a
+      href={ctas.final.cta.href}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="btn-light mt-9"
+    >
       {ctas.final.cta.label}
       <span class="arrow" aria-hidden="true">→</span>
     </a>
