@@ -49,8 +49,8 @@ export const advisors: Advisor[] = [
   },
   {
     name: "Gary Lin",
-    role: "Founder, Explo",
-    bio: "Previously SWE at OpenAI.",
+    role: "SWE at OpenAI",
+    bio: "Previously founder of Explo.",
     imageAlt: "Gary Lin headshot",
     image: "/headshots/1670107191155.jpeg",
   },
