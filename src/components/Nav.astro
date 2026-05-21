@@ -246,54 +246,48 @@ import { nav, hero, WAITLIST_URL } from "../content";
   }
 
   // -----------------------------------------------------------------
-  // Merge mode: when a [data-nav-merge="true"] section is in the
-  // upper viewport (under the nav), drop the nav's glass + border so
-  // it visually fuses with that section.
+  // Merge: when a [data-nav-merge="true"] section sits directly
+  // under the nav, drop the glass + border so the nav visually
+  // fuses with the section. Uses scroll-based geometry check
+  // (more predictable than IO at the exact nav-bottom seam).
   // -----------------------------------------------------------------
-  const setupMergeObserver = () => {
-    if (!nav || !("IntersectionObserver" in window)) return;
-    const targets = document.querySelectorAll('[data-nav-merge="true"]');
-    if (targets.length === 0) return;
-
-    const io = new IntersectionObserver(
-      (entries) => {
-        // If any target is intersecting, merge.
-        const anyMerging = entries.some((e) => e.isIntersecting);
-        if (anyMerging) {
-          nav.dataset.merge = "true";
-        } else {
-          // Only clear if NONE of the observed targets are intersecting.
-          const stillMerging = Array.from(targets).some((t) => {
-            const rect = (t as HTMLElement).getBoundingClientRect();
-            return rect.top < 110 && rect.bottom > 0;
-          });
-          nav.dataset.merge = stillMerging ? "true" : "false";
-        }
-      },
-      // Trigger when the target's top crosses ~110px from the viewport top
-      // (i.e., it sits right under the nav + banner).
-      { rootMargin: "-100px 0px -85% 0px", threshold: 0 },
+  const checkMerge = () => {
+    if (!nav) return;
+    const targets = document.querySelectorAll<HTMLElement>(
+      '[data-nav-merge="true"]',
     );
-
-    targets.forEach((t) => io.observe(t));
+    const navBottom = nav.getBoundingClientRect().bottom;
+    let merging = false;
+    for (const t of targets) {
+      const rect = t.getBoundingClientRect();
+      // Section's top is at or above nav bottom AND section's bottom is
+      // still below nav bottom -> section currently sits behind the nav.
+      if (rect.top <= navBottom && rect.bottom > navBottom) {
+        merging = true;
+        break;
+      }
+    }
+    nav.dataset.merge = merging ? "true" : "false";
   };
 
   update();
   checkBrand();
-  setupMergeObserver();
+  checkMerge();
   window.addEventListener(
     "scroll",
     () => {
       update();
       checkBrand();
+      checkMerge();
     },
     { passive: true },
   );
+  window.addEventListener("resize", checkMerge, { passive: true });
   document.addEventListener("astro:after-swap", () => {
     update();
     brandState = "long";
     if (brand) brand.textContent = LONG;
     checkBrand();
-    setupMergeObserver();
+    checkMerge();
   });
 </script>
