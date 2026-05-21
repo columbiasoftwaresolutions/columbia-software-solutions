@@ -2,14 +2,20 @@
 import { ctas } from "../content";
 ---
 
+<!-- Fixed full-viewport dark fill that grows in when FinalCTA enters
+     the viewport. Sits behind the section content (z-index 30) but
+     above all other page sections (z auto) so it visually covers the
+     light Team section above and Footer below as it grows. -->
+<div id="cta-fill" class="cta-fill" aria-hidden="true"></div>
+
 <section
-  class="reveal relative isolate overflow-hidden bg-hero-bg text-hero-fg min-h-screen flex flex-col justify-center py-24"
+  class="reveal cta-section relative isolate bg-hero-bg text-hero-fg py-20 md:py-28"
   data-nav-merge="true"
 >
   <div class="container-x relative z-10">
     <p class="eyebrow !text-white/55">Build with us</p>
     <h2
-      class="display mt-5 text-[clamp(48px,8vw,120px)] text-white max-w-[18ch]"
+      class="display mt-5 text-[clamp(44px,7vw,96px)] text-white max-w-[18ch]"
     >
       {ctas.final.headline}
     </h2>
@@ -42,3 +48,65 @@ import { ctas } from "../content";
     <rect width="100%" height="100%" fill="url(#dot-grid)"></rect>
   </svg>
 </section>
+
+<style>
+  .cta-fill {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: var(--hero-bg);
+    z-index: 30;
+    pointer-events: none;
+    transform-origin: center;
+    transform: scaleY(0);
+    transition: transform 900ms cubic-bezier(0.22, 0.61, 0.24, 1);
+    will-change: transform;
+  }
+  .cta-fill.is-on {
+    transform: scaleY(1);
+  }
+
+  /* The section sits above the fill so its content is always visible. */
+  .cta-section {
+    z-index: 40;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cta-fill {
+      transition: opacity 200ms ease;
+      transform: scaleY(1);
+      opacity: 0;
+    }
+    .cta-fill.is-on {
+      opacity: 1;
+    }
+  }
+</style>
+
+<script>
+  // Activate the dark fill when the FinalCTA section is "behind" the
+  // nav (its top has scrolled above the nav's bottom). Same trigger
+  // as the nav merge, kept here so this component owns its visual.
+  const fill = document.getElementById("cta-fill");
+  const nav = document.getElementById("site-nav");
+  const section = document.querySelector(".cta-section") as HTMLElement | null;
+
+  const check = () => {
+    if (!fill || !section) return;
+    const rect = section.getBoundingClientRect();
+    const vh = window.innerHeight;
+    // Active once the section is meaningfully in view — its top has
+    // crossed below the midpoint of the viewport (i.e., user has
+    // scrolled near the bottom of the page).
+    const active = rect.top < vh * 0.55 && rect.bottom > 0;
+    fill.classList.toggle("is-on", active);
+    if (nav) nav.dataset.merge = active ? "true" : "false";
+  };
+
+  check();
+  window.addEventListener("scroll", check, { passive: true });
+  window.addEventListener("resize", check, { passive: true });
+  document.addEventListener("astro:after-swap", check);
+</script>
