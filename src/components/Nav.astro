@@ -10,7 +10,7 @@ import { nav, hero, WAITLIST_URL } from "../content";
   <div class="container-x flex h-16 items-center justify-between">
     <a
       href="#top"
-      class="flex items-center gap-2.5 font-display text-[18px] font-semibold uppercase tracking-[0.02em] leading-none"
+      class="flex items-center gap-2.5 font-display text-[16px] md:text-[18px] font-semibold uppercase tracking-[0.02em] leading-none"
       data-nav-link
       aria-label="Columbia Software Solutions home"
     >
@@ -22,7 +22,12 @@ import { nav, hero, WAITLIST_URL } from "../content";
         class="nav-lion"
         aria-hidden="true"
       />
-      <span>CSS</span>
+      <span
+        id="brand-text"
+        data-long="Columbia Software Solutions"
+        data-short="CSS"
+        class="brand-text"
+      >Columbia Software Solutions</span>
     </a>
 
     <div class="flex items-center gap-8">
@@ -61,6 +66,14 @@ import { nav, hero, WAITLIST_URL } from "../content";
     height: 32px;
     object-fit: contain;
     display: block;
+  }
+
+  /* Brand text uses tabular numerals + a fixed-width cap so the
+     scramble doesn't cause layout jitter. */
+  .brand-text {
+    display: inline-block;
+    white-space: nowrap;
+    will-change: contents;
   }
 
   /* Three states:
@@ -134,21 +147,108 @@ import { nav, hero, WAITLIST_URL } from "../content";
 
 <script>
   const nav = document.getElementById("site-nav");
+  const brand = document.getElementById("brand-text") as HTMLElement | null;
+  const LONG = brand?.dataset.long ?? "Columbia Software Solutions";
+  const SHORT = brand?.dataset.short ?? "CSS";
+  const SCRAMBLE_THRESHOLD = 80;
 
   const update = () => {
     if (!nav) return;
     const y = window.scrollY;
     const pageThreshold = Math.min(window.innerHeight * 0.6, 500);
     if (y > pageThreshold) {
-      nav.dataset.mode = "page"; // dark bar over light content
+      nav.dataset.mode = "page";
     } else if (y > 12) {
-      nav.dataset.mode = "hero"; // light bar over dark hero (scrolled)
+      nav.dataset.mode = "hero";
     } else {
-      nav.dataset.mode = "top"; // fully transparent at the very top
+      nav.dataset.mode = "top";
     }
   };
 
+  // -----------------------------------------------------------------
+  // Brand-text scramble. As the user scrolls past SCRAMBLE_THRESHOLD,
+  // the wordmark morphs from "Columbia Software Solutions" -> "CSS"
+  // by scrambling chars and shrinking length. Reverses on scroll back.
+  // -----------------------------------------------------------------
+  const GLYPHS = "@#%&$+*/={}<>?~!|^";
+  let brandState: "long" | "short" = "long";
+  let animFrame = 0;
+
+  function scrambleMorph(
+    from: string,
+    to: string,
+    duration: number,
+    onDone?: () => void,
+  ) {
+    if (!brand) return;
+    const startTime = performance.now();
+    const localFrame = ++animFrame;
+    const fromLen = from.length;
+    const toLen = to.length;
+
+    const tick = (now: number) => {
+      // If another animation has started, abort this one.
+      if (localFrame !== animFrame) return;
+      const t = Math.min((now - startTime) / duration, 1);
+
+      if (t < 1) {
+        const len = Math.max(
+          toLen,
+          Math.round(fromLen + (toLen - fromLen) * t),
+        );
+        const out: string[] = [];
+        for (let i = 0; i < len; i++) {
+          if (t > 0.78 && i < toLen) {
+            out.push(to[i]!);
+          } else if (t > 0.32) {
+            out.push(GLYPHS[Math.floor(Math.random() * GLYPHS.length)]!);
+          } else {
+            // Mostly original, with rising probability of scramble.
+            const scrambleChance = t / 0.32;
+            if (Math.random() < scrambleChance) {
+              out.push(GLYPHS[Math.floor(Math.random() * GLYPHS.length)]!);
+            } else {
+              out.push(from[i] ?? " ");
+            }
+          }
+        }
+        brand.textContent = out.join("");
+        requestAnimationFrame(tick);
+      } else {
+        brand.textContent = to;
+        onDone?.();
+      }
+    };
+
+    requestAnimationFrame(tick);
+  }
+
+  function checkBrand() {
+    if (!brand) return;
+    const y = window.scrollY;
+    if (y > SCRAMBLE_THRESHOLD && brandState === "long") {
+      brandState = "short";
+      scrambleMorph(LONG, SHORT, 650);
+    } else if (y < 20 && brandState === "short") {
+      brandState = "long";
+      scrambleMorph(SHORT, LONG, 700);
+    }
+  }
+
   update();
-  window.addEventListener("scroll", update, { passive: true });
-  document.addEventListener("astro:after-swap", update);
+  checkBrand();
+  window.addEventListener(
+    "scroll",
+    () => {
+      update();
+      checkBrand();
+    },
+    { passive: true },
+  );
+  document.addEventListener("astro:after-swap", () => {
+    update();
+    brandState = "long";
+    if (brand) brand.textContent = LONG;
+    checkBrand();
+  });
 </script>
