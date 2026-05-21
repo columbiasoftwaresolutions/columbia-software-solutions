@@ -240,10 +240,10 @@ import { nav, hero, WAITLIST_URL } from "../content";
     const y = window.scrollY;
     if (y > SCRAMBLE_THRESHOLD && brandState === "long") {
       brandState = "short";
-      scrambleMorph(LONG, SHORT, 650);
+      scrambleMorph(LONG, SHORT, 1100);
     } else if (y < 20 && brandState === "short") {
       brandState = "long";
-      scrambleMorph(SHORT, LONG, 700);
+      scrambleMorph(SHORT, LONG, 1200);
     }
   }
 
