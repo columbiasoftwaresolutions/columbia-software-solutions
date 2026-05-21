@@ -17,10 +17,10 @@ export const nav = {
 };
 
 export const hero = {
-  eyebrow: "Columbia Software Solutions",
-  headline: "Columbia CS students. Real software. Free for NYC.",
+  eyebrow: null,
+  headline: "Free software for NYC.",
   subhead:
-    "We're a student consulting club building free software for NYC nonprofits and small businesses. Founded 2025. Two clients shipped. Backed by operators from Bain Capital Ventures, OpenAI, and Harvard Business School.",
+    "Columbia Software Solutions: a student consulting club building free software for NYC nonprofits and small businesses. Founded 2025. Two clients shipped. Advisors from Bain Capital Ventures, OpenAI, and Harvard Business School.",
   primaryCta: { label: "Join the waitlist", href: WAITLIST_URL },
   ghostCta: { label: "Work with us", href: `mailto:${CLIENT_EMAIL}` },
 };
@@ -30,6 +30,8 @@ export type Advisor = {
   role: string;
   bio: string;
   imageAlt: string;
+  /** Path under /public, e.g. "/advisors/kevin.jpg". Null = use initials placeholder. */
+  image?: string | null;
 };
 
 export const advisors: Advisor[] = [
@@ -38,18 +40,21 @@ export const advisors: Advisor[] = [
     role: "Partner, Bain Capital Ventures",
     bio: "Early investor in DoorDash, Rec Room, and Tally. Columbia alum.",
     imageAlt: "Kevin Zhang headshot",
+    image: "/headshots/1725656181053.jpeg",
   },
   {
     name: "Gary Lin",
     role: "OpenAI",
     bio: "Building at the frontier of applied AI.",
     imageAlt: "Gary Lin headshot",
+    image: "/headshots/1670107191155.jpeg",
   },
   {
     name: "Hadley Callaway",
     role: "Incoming HBS",
     bio: "Previously SWE at Brex and Doppel.",
     imageAlt: "Hadley Callaway headshot",
+    image: "/headshots/1753048604662.jpeg",
   },
 ];
 
@@ -102,6 +107,7 @@ export type TeamMember = {
   role: string;
   bio: string;
   imageAlt: string;
+  image?: string | null;
 };
 
 export const team: TeamMember[] = [
@@ -110,18 +116,21 @@ export const team: TeamMember[] = [
     role: "Founder",
     bio: "Columbia CS '28.",
     imageAlt: "Ethan Zhang headshot",
+    image: "/headshots/1729533250251.jpeg",
   },
   {
     name: "Kushaan Vardhan",
     role: "Co-founder",
     bio: "[placeholder bio]",
     imageAlt: "Kushaan Vardhan headshot",
+    image: "/headshots/1682802197159.jpeg",
   },
   {
     name: "Siddharth Rout",
-    role: "Co-founder",
+    role: "Founding Team",
     bio: "[placeholder bio]",
     imageAlt: "Siddharth Rout headshot",
+    image: "/headshots/1767549913519.jpeg",
   },
 ];
 

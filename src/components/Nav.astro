@@ -4,8 +4,8 @@ import { nav, hero, WAITLIST_URL } from "../content";
 
 <header
   id="site-nav"
-  class="fixed inset-x-0 top-0 z-50 transition-colors duration-200"
-  data-mode="hero"
+  class="fixed inset-x-0 top-9 z-50 transition-colors duration-200"
+  data-mode="top"
 >
   <div class="container-x flex h-16 items-center justify-between">
     <a
@@ -15,11 +15,11 @@ import { nav, hero, WAITLIST_URL } from "../content";
       aria-label="Columbia Software Solutions home"
     >
       <img
-        src="/favicon-192x192.png"
+        src="/logo.png"
         alt=""
-        width="28"
-        height="28"
-        class="nav-lion h-7 w-7"
+        width="32"
+        height="32"
+        class="nav-lion"
         aria-hidden="true"
       />
       <span>CSS</span>
@@ -56,39 +56,79 @@ import { nav, hero, WAITLIST_URL } from "../content";
 </header>
 
 <style>
-  /* Hero mode: nav sits on dark blue hero -> white text + white CTA pill */
-  #site-nav[data-mode="hero"] [data-nav-link] {
+  .nav-lion {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    display: block;
+  }
+
+  /* Three states:
+     "top"  -> transparent, sits invisibly on dark hero (page not scrolled)
+     "hero" -> light beige (scrolled but still on hero — inverts over dark)
+     "page" -> dark blackish (scrolled past hero — inverts over light content) */
+
+  /* TOP: page at scrollY=0. No bar bg; nav reads as white text on hero. */
+  #site-nav[data-mode="top"] {
+    background: transparent;
+    border-bottom: 1px solid transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  #site-nav[data-mode="top"] [data-nav-link] {
     color: rgba(255, 255, 255, 0.85);
   }
-  #site-nav[data-mode="hero"] [data-nav-link]:hover {
+  #site-nav[data-mode="top"] [data-nav-link]:hover {
     color: #ffffff;
   }
-  #site-nav[data-mode="hero"] [data-nav-cta] {
+  #site-nav[data-mode="top"] [data-nav-cta] {
     background: #ffffff;
     color: var(--hero-bg);
   }
-  #site-nav[data-mode="hero"] [data-nav-cta]:hover {
+  #site-nav[data-mode="top"] [data-nav-cta]:hover {
     background: rgba(255, 255, 255, 0.9);
   }
 
-  /* Page mode: scrolled past hero -> light background nav with dark text */
-  #site-nav[data-mode="page"] {
-    background: rgba(249, 249, 249, 0.85);
-    backdrop-filter: blur(8px);
+  /* HERO: scrolled a bit, still over hero -> LIGHT beige nav */
+  #site-nav[data-mode="hero"] {
+    background: rgba(230, 227, 224, 0.94);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--line);
   }
-  #site-nav[data-mode="page"] [data-nav-link] {
+  #site-nav[data-mode="hero"] [data-nav-link] {
     color: rgba(30, 30, 30, 0.7);
   }
-  #site-nav[data-mode="page"] [data-nav-link]:hover {
+  #site-nav[data-mode="hero"] [data-nav-link]:hover {
     color: var(--fg);
   }
-  #site-nav[data-mode="page"] [data-nav-cta] {
-    background: var(--accent);
+  #site-nav[data-mode="hero"] [data-nav-cta] {
+    background: var(--fg);
+    color: var(--bg);
+  }
+  #site-nav[data-mode="hero"] [data-nav-cta]:hover {
+    background: rgba(30, 30, 30, 0.86);
+  }
+
+  /* Page mode: scrolled past hero -> DARK blackish nav */
+  #site-nav[data-mode="page"] {
+    background: rgba(22, 22, 22, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  #site-nav[data-mode="page"] [data-nav-link] {
+    color: rgba(255, 255, 255, 0.7);
+  }
+  #site-nav[data-mode="page"] [data-nav-link]:hover {
     color: #ffffff;
   }
+  #site-nav[data-mode="page"] [data-nav-cta] {
+    background: #ffffff;
+    color: var(--fg);
+  }
   #site-nav[data-mode="page"] [data-nav-cta]:hover {
-    background: var(--accent-dark);
+    background: rgba(255, 255, 255, 0.9);
   }
 </style>
 
@@ -97,9 +137,15 @@ import { nav, hero, WAITLIST_URL } from "../content";
 
   const update = () => {
     if (!nav) return;
-    // Threshold: switch to page mode once user scrolls past most of viewport
-    const threshold = Math.min(window.innerHeight * 0.6, 500);
-    nav.dataset.mode = window.scrollY > threshold ? "page" : "hero";
+    const y = window.scrollY;
+    const pageThreshold = Math.min(window.innerHeight * 0.6, 500);
+    if (y > pageThreshold) {
+      nav.dataset.mode = "page"; // dark bar over light content
+    } else if (y > 12) {
+      nav.dataset.mode = "hero"; // light bar over dark hero (scrolled)
+    } else {
+      nav.dataset.mode = "top"; // fully transparent at the very top
+    }
   };
 
   update();

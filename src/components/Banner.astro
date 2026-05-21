@@ -1,0 +1,33 @@
+---
+import { WAITLIST_URL } from "../content";
+---
+
+<a
+  href={WAITLIST_URL}
+  class="banner block"
+  aria-label="Founding advisory board announcement"
+>
+  <div class="container-x flex h-9 items-center justify-center gap-2 text-[12px] tracking-wide text-white">
+    <span>Founding Advisory Board — BCV · OpenAI · HBS</span>
+    <span aria-hidden="true">→</span>
+  </div>
+</a>
+
+<style>
+  .banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 60;
+    height: 36px;
+    background: #0d3cfc;
+    color: #fff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    text-decoration: none;
+    transition: opacity 200ms ease;
+  }
+  .banner:hover {
+    opacity: 0.92;
+  }
+</style>
