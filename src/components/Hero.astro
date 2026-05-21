@@ -45,7 +45,12 @@ const tabs = [
             {hero.primaryCta.label}
             <span class="arrow" aria-hidden="true">→</span>
           </a>
-          <a href={hero.ghostCta.href} class="btn-light-ghost">
+          <a
+            href={hero.ghostCta.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-light-ghost"
+          >
             {hero.ghostCta.label}
             <span class="arrow" aria-hidden="true">→</span>
           </a>

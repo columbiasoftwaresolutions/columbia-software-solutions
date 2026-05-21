@@ -7,6 +7,11 @@
 export const WAITLIST_URL = "https://forms.gle/29V5X5qWiGPV71WHA";
 export const CLIENT_EMAIL = "cusoftwaresolutions@gmail.com";
 
+/** Gmail compose URL — works in any browser without a system mail handler. */
+export const CONTACT_URL = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(
+  CLIENT_EMAIL,
+)}`;
+
 export const nav = {
   links: [
     { label: "Work", href: "#work" },
@@ -22,7 +27,7 @@ export const hero = {
   subhead:
     "Columbia Software Solutions: a student consulting club building free software for NYC nonprofits and small businesses. Founded 2026. Two clients shipped. Advisors from Bain Capital Ventures, OpenAI, and Harvard Business School.",
   primaryCta: { label: "Join the waitlist", href: WAITLIST_URL },
-  ghostCta: { label: "Work with us", href: `mailto:${CLIENT_EMAIL}` },
+  ghostCta: { label: "Work with us", href: CONTACT_URL },
 };
 
 export type Advisor = {

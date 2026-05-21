@@ -1,5 +1,5 @@
 ---
-import { CLIENT_EMAIL } from "../content";
+import { CONTACT_URL } from "../content";
 ---
 
 <section id="for-clients" class="reveal py-20 md:py-24 border-b border-line">
@@ -20,7 +20,12 @@ import { CLIENT_EMAIL } from "../content";
           semester. No cost.
         </p>
 
-        <a href={`mailto:${CLIENT_EMAIL}`} class="btn-primary mt-9">
+        <a
+          href={CONTACT_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-primary mt-9"
+        >
           Work with us
           <span class="arrow" aria-hidden="true">→</span>
         </a>
