@@ -132,6 +132,13 @@ export const team: TeamMember[] = [
     imageAlt: "Siddharth Rout headshot",
     image: "/headshots/1767549913519.jpeg",
   },
+  {
+    name: "Toffy Prakittiphoom",
+    role: "Founding Team",
+    bio: "[placeholder bio]",
+    imageAlt: "Toffy Prakittiphoom headshot",
+    image: "/headshots/1695960659223.jpeg",
+  },
 ];
 
 export const ctas = {
