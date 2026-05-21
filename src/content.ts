@@ -25,7 +25,7 @@ export const hero = {
   eyebrow: null,
   headline: "Free software for NYC.",
   subhead:
-    "Columbia Software Solutions: a student consulting club building free software for NYC nonprofits and small businesses. Founded 2026. Advisors from Bain Capital Ventures, OpenAI, and Harvard Business School.",
+    "Columbia Software Solutions: a student consulting club building free software for NYC nonprofits and small businesses. Founded 2026. Advisors from Bain Capital Ventures, OpenAI, and Y Combinator.",
   primaryCta: { label: "Join the waitlist", href: WAITLIST_URL },
   ghostCta: { label: "Work with us", href: CONTACT_URL },
 };
@@ -42,8 +42,8 @@ export type Advisor = {
 export const advisors: Advisor[] = [
   {
     name: "Kevin Zhang",
-    role: "Partner, Bain Capital Ventures",
-    bio: "Early investor in DoorDash, Rec Room, and Tally. Columbia alum.",
+    role: "Partner at Bain Capital Ventures",
+    bio: "Previously SWE at OpenAI. Founder of Explo.",
     imageAlt: "Kevin Zhang headshot",
     image: "/headshots/1725656181053.jpeg",
   },
@@ -56,8 +56,8 @@ export const advisors: Advisor[] = [
   },
   {
     name: "Hadley Callaway",
-    role: "Incoming HBS",
-    bio: "Previously SWE at Brex and Doppel.",
+    role: "Chief of Staff at Sazabi (YC P26)",
+    bio: "Previously Software Engineer at Doppel, Brex, and Microsoft.",
     imageAlt: "Hadley Callaway headshot",
     image: "/headshots/1753048604662.jpeg",
   },
