@@ -143,6 +143,16 @@ import { nav, hero, WAITLIST_URL } from "../content";
   #site-nav[data-mode="page"] [data-nav-cta]:hover {
     background: rgba(255, 255, 255, 0.9);
   }
+
+  /* MERGE: a dark section (e.g. FinalCTA) sits under the nav.
+     Drop the glass + border so the nav reads as one continuous
+     dark surface with the section below it. */
+  #site-nav[data-merge="true"] {
+    background: var(--hero-bg) !important;
+    border-bottom-color: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
 </style>
 
 <script>
@@ -235,8 +245,42 @@ import { nav, hero, WAITLIST_URL } from "../content";
     }
   }
 
+  // -----------------------------------------------------------------
+  // Merge mode: when a [data-nav-merge="true"] section is in the
+  // upper viewport (under the nav), drop the nav's glass + border so
+  // it visually fuses with that section.
+  // -----------------------------------------------------------------
+  const setupMergeObserver = () => {
+    if (!nav || !("IntersectionObserver" in window)) return;
+    const targets = document.querySelectorAll('[data-nav-merge="true"]');
+    if (targets.length === 0) return;
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        // If any target is intersecting, merge.
+        const anyMerging = entries.some((e) => e.isIntersecting);
+        if (anyMerging) {
+          nav.dataset.merge = "true";
+        } else {
+          // Only clear if NONE of the observed targets are intersecting.
+          const stillMerging = Array.from(targets).some((t) => {
+            const rect = (t as HTMLElement).getBoundingClientRect();
+            return rect.top < 110 && rect.bottom > 0;
+          });
+          nav.dataset.merge = stillMerging ? "true" : "false";
+        }
+      },
+      // Trigger when the target's top crosses ~110px from the viewport top
+      // (i.e., it sits right under the nav + banner).
+      { rootMargin: "-100px 0px -85% 0px", threshold: 0 },
+    );
+
+    targets.forEach((t) => io.observe(t));
+  };
+
   update();
   checkBrand();
+  setupMergeObserver();
   window.addEventListener(
     "scroll",
     () => {
@@ -250,5 +294,6 @@ import { nav, hero, WAITLIST_URL } from "../content";
     brandState = "long";
     if (brand) brand.textContent = LONG;
     checkBrand();
+    setupMergeObserver();
   });
 </script>
