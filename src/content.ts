@@ -135,7 +135,7 @@ export const team: TeamMember[] = [
   {
     name: "Toffy Prakittiphoom",
     role: "Founding Team",
-    bio: "Columbia Sustainable Development '28.",
+    bio: "Columbia SD '28.",
     imageAlt: "Toffy Prakittiphoom headshot",
     image: "/headshots/1695960659223.jpeg",
   },
