@@ -1,21 +1,33 @@
 ---
-/**
- * Hero scene — real interactive Leaflet map of client locations.
- * CartoDB DarkMatter tiles match the site's dark aesthetic. Each
- * client is a pulsing electric-blue marker; hover opens a popup
- * with name + tagline; click scrolls to the case studies section.
- */
+import { caseStudies } from "../content";
+
+// Pass marker data to client-side script as a JSON payload — keeps
+// the data source unified with the case studies array.
+const markerData = caseStudies.map((c) => ({
+  id: c.id,
+  name: c.clientName,
+  tag: c.tagline,
+  coords: c.coords,
+  status: c.status,
+}));
 ---
 
 <div class="map-shell">
   <div
     id="hero-map"
     class="hero-map"
-    aria-label="Map of Columbia Software Solutions client locations in NYC"
+    aria-label="Map of Columbia Software Solutions client locations"
+    data-markers={JSON.stringify(markerData)}
   ></div>
   <div class="legend" aria-hidden="true">
-    <span class="legend-dot"></span>
-    <span>Clients in NYC</span>
+    <span class="legend-row">
+      <span class="legend-shipped"></span>
+      <span>Shipped</span>
+    </span>
+    <span class="legend-row">
+      <span class="legend-progress"></span>
+      <span>In progress</span>
+    </span>
   </div>
 </div>
 
@@ -47,11 +59,12 @@
     z-index: 1;
   }
 
-  /* Custom marker (electric blue dot + pulsing ring) */
+  /* ---- Marker variants ---- */
   :global(.css-marker) {
     position: relative;
   }
-  :global(.css-marker-dot) {
+  /* Shipped: filled blue dot + pulsing ring */
+  :global(.css-marker--shipped .dot) {
     position: absolute;
     left: 50%;
     top: 50%;
@@ -64,7 +77,7 @@
     box-shadow: 0 0 10px rgba(13, 60, 252, 0.7);
     z-index: 2;
   }
-  :global(.css-marker-ring) {
+  :global(.css-marker--shipped .ring) {
     position: absolute;
     left: 50%;
     top: 50%;
@@ -75,17 +88,34 @@
     background: rgba(13, 60, 252, 0.4);
     animation: marker-pulse 2.4s ease-out infinite;
   }
+  /* In progress: hollow ring, no pulse */
+  :global(.css-marker--in-progress .dot) {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 14px;
+    height: 14px;
+    margin: -7px 0 0 -7px;
+    border-radius: 50%;
+    background: transparent;
+    border: 2px solid #ffffff;
+    box-shadow: 0 0 8px rgba(13, 60, 252, 0.45);
+    z-index: 2;
+  }
+  :global(.css-marker--in-progress .ring) {
+    display: none;
+  }
   @keyframes marker-pulse {
     0% { transform: scale(0.6); opacity: 0.7; }
     100% { transform: scale(2.6); opacity: 0; }
   }
-  :global(.css-marker:hover .css-marker-dot) {
-    transform: scale(1.15);
+  :global(.css-marker:hover .dot) {
+    transform: scale(1.18);
     box-shadow: 0 0 16px rgba(13, 60, 252, 0.95);
     transition: transform 160ms ease, box-shadow 160ms ease;
   }
 
-  /* Style Leaflet popup to match site */
+  /* ---- Popup styling ---- */
   :global(.leaflet-popup-content-wrapper) {
     background: rgba(22, 22, 22, 0.96) !important;
     color: #fff !important;
@@ -121,8 +151,20 @@
     letter-spacing: 0.07em;
     margin-top: 2px;
   }
-  :global(.css-popup-cta) {
+  :global(.css-popup-status) {
     display: inline-block;
+    margin-top: 6px;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.55);
+    padding: 2px 7px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+  }
+  :global(.css-popup-cta) {
+    display: block;
     font-family:
       "Geist Sans",
       sans-serif;
@@ -131,7 +173,7 @@
     margin-top: 6px;
   }
 
-  /* Make Leaflet zoom controls + attribution match the dark style */
+  /* ---- Leaflet chrome (dark) ---- */
   :global(.leaflet-control-attribution) {
     background: rgba(0, 0, 0, 0.55) !important;
     color: rgba(255, 255, 255, 0.45) !important;
@@ -150,14 +192,15 @@
     background: rgba(40, 40, 40, 0.96) !important;
   }
 
+  /* ---- Legend (bottom-left) ---- */
   .legend {
     position: absolute;
     bottom: 12px;
     left: 14px;
     z-index: 500;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
     font-family: "JetBrains Mono", ui-monospace, monospace;
     font-size: 10px;
     color: rgba(255, 255, 255, 0.6);
@@ -171,53 +214,56 @@
     border: 1px solid rgba(255, 255, 255, 0.08);
     pointer-events: none;
   }
-  .legend-dot {
-    width: 6px;
-    height: 6px;
+  .legend-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .legend-shipped {
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
     background: #0d3cfc;
+    border: 1.5px solid #fff;
     box-shadow: 0 0 6px rgba(13, 60, 252, 0.7);
+  }
+  .legend-progress {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: transparent;
+    border: 1.5px solid #fff;
   }
 </style>
 
 <script>
   import L from "leaflet";
 
-  type ClientMarker = {
+  type MarkerInput = {
     id: string;
     name: string;
     tag: string;
     coords: [number, number];
-    href: string;
+    status: "shipped" | "in-progress";
   };
-
-  const markers: ClientMarker[] = [
-    {
-      id: "refettorio",
-      name: "Refettorio Harlem",
-      tag: "Community kitchen — Harlem",
-      coords: [40.8089, -73.9482], // ~125th & Lenox
-      href: "#cases",
-    },
-    {
-      id: "swipe-market",
-      name: "Columbia Swipe Market",
-      tag: "Campus — Morningside Heights",
-      coords: [40.8075, -73.9626], // Columbia campus
-      href: "#cases",
-    },
-  ];
 
   const init = () => {
     const el = document.getElementById("hero-map") as HTMLElement | null;
-    if (!el) return;
-    if (el.dataset.init === "true") return;
+    if (!el || el.dataset.init === "true") return;
     el.dataset.init = "true";
+
+    let markers: MarkerInput[] = [];
+    try {
+      markers = JSON.parse(el.dataset.markers ?? "[]");
+    } catch {
+      markers = [];
+    }
+    if (markers.length === 0) return;
 
     const map = L.map(el, {
       zoomControl: true,
       attributionControl: true,
-      scrollWheelZoom: false, // avoid hijacking page scroll
+      scrollWheelZoom: false,
       dragging: true,
       tap: true,
     });
@@ -235,21 +281,24 @@
     const group = L.featureGroup();
     for (const m of markers) {
       const icon = L.divIcon({
-        className: "css-marker",
-        html: '<div class="css-marker-ring"></div><div class="css-marker-dot"></div>',
+        className: `css-marker css-marker--${m.status}`,
+        html: '<div class="ring"></div><div class="dot"></div>',
         iconSize: [14, 14],
         iconAnchor: [7, 7],
       });
       const marker = L.marker(m.coords, { icon }).addTo(group);
+      const statusLabel =
+        m.status === "shipped" ? "Shipped" : "In progress";
       marker.bindPopup(
         `<span class="css-popup-name">${m.name}</span>` +
           `<span class="css-popup-tag">${m.tag}</span>` +
-          `<a class="css-popup-cta" href="${m.href}">View case study →</a>`,
+          `<span class="css-popup-status">${statusLabel}</span>` +
+          `<a class="css-popup-cta" href="#case-${m.id}">View on page →</a>`,
         { closeButton: false, offset: L.point(0, -4) },
       );
       marker.on("mouseover", () => marker.openPopup());
       marker.on("click", () => {
-        const target = document.querySelector(m.href) as HTMLElement | null;
+        const target = document.getElementById(`case-${m.id}`);
         if (target) {
           target.scrollIntoView({ behavior: "smooth", block: "start" });
         }
@@ -257,12 +306,14 @@
     }
     group.addTo(map);
 
-    // Fit the map to both markers with comfortable padding.
-    map.fitBounds(group.getBounds(), { padding: [50, 50], maxZoom: 14 });
+    // Fit all markers with comfortable padding. maxZoom keeps the
+    // view honest when pins are very close together (NYC pair).
+    map.fitBounds(group.getBounds(), { padding: [44, 44], maxZoom: 11 });
 
-    // Enable scroll wheel zoom only when the user actually interacts.
-    map.once("focus", () => map.scrollWheelZoom.enable());
+    // Enable scroll-wheel zoom only after the user explicitly clicks
+    // into the map, so the map doesn't hijack page scroll.
     map.on("click", () => map.scrollWheelZoom.enable());
+    map.on("focus", () => map.scrollWheelZoom.enable());
   };
 
   init();
