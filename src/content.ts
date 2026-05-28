@@ -70,8 +70,8 @@ export type CaseStudy = {
   stats: { value: string; label: string }[];
   stack?: string[];
   press?: { label: string; href: string };
-  /** CSS team members who built the project. */
-  builders?: string[];
+  /** Free-form credit line (e.g. "Originally built by ..."). */
+  attribution?: string;
   imageAlt: string;
   /** Optional image path under /public, e.g. "/projects/refettorio.jpg". */
   image?: string | null;
@@ -106,16 +106,16 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     clientName: "Columbia Swipe Market",
-    tagline: "[Sector — Borough]",
+    tagline: "Campus — Morningside Heights",
     description:
-      "[Short project description — TODO: what does Columbia Swipe Market do?]",
+      "The only marketplace for Columbia students to buy, sell, and donate meal swipes. Originally built by Owen Terry & Caroline Smyth in April 2025; transferred to Columbia Software Solutions for ongoing development and maintenance.",
     stats: [
-      { value: "—", label: "stat 1 — TODO" },
-      { value: "—", label: "stat 2 — TODO" },
-      { value: "—", label: "stat 3 — TODO" },
+      { value: "$7,000+", label: "in meal swipes traded" },
+      { value: "100+", label: "transactions in 2 weeks of launch" },
+      { value: "Only", label: "platform of its kind at Columbia" },
     ],
-    stack: ["[stack item — TODO]"],
-    builders: ["Owen Terry", "Caroline Smyth"],
+    stack: ["Flask", "PostgreSQL", "Google OAuth", "Gmail API", "Render"],
+    attribution: "Originally built by Owen Terry & Caroline Smyth",
     imageAlt: "Columbia Swipe Market product UI",
     image: null,
   },

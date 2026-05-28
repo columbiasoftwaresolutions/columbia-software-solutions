@@ -66,9 +66,9 @@ import { caseStudies } from "../content";
                   ))}
                 </dl>
 
-                {cs.builders && cs.builders.length > 0 && (
+                {cs.attribution && (
                   <p class="mt-6 text-[12px] uppercase tracking-eyebrow text-muted">
-                    Built by {cs.builders.join(" & ")}
+                    {cs.attribution}
                   </p>
                 )}
 
