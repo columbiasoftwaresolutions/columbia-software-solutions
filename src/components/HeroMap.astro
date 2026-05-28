@@ -1,0 +1,274 @@
+---
+/**
+ * Hero scene — minimalist Manhattan map with client markers.
+ * Hand-drawn SVG outline (no tiles, no library). Each client is a
+ * pulsing electric-blue dot. Hover shows a pill tooltip; click scrolls
+ * to the case study section below.
+ */
+
+type Marker = {
+  id: string;
+  name: string;
+  tagline: string;
+  /** Position as % of map width / height. */
+  x: number;
+  y: number;
+  href: string;
+};
+
+// Manhattan tip ≈ 220th St; Battery ≈ 1st St. So 220 streets vertical.
+// Approx street → y%:  y = (220 - street) / 220 * 0.93 + 0.04
+// Refettorio (~125th St & Lenox) — Harlem
+// Swipe Market — Columbia campus (~116th St & Broadway)
+const markers: Marker[] = [
+  {
+    id: "refettorio",
+    name: "Refettorio Harlem",
+    tagline: "Community kitchen",
+    x: 56,
+    y: 44,
+    href: "#cases",
+  },
+  {
+    id: "swipe-market",
+    name: "Columbia Swipe Market",
+    tagline: "Morningside Heights",
+    x: 36,
+    y: 48,
+    href: "#cases",
+  },
+];
+---
+
+<div class="map-wrap" aria-label="Map of Manhattan with client locations">
+  <svg
+    viewBox="0 0 320 540"
+    class="map-svg"
+    fill="none"
+    aria-hidden="true"
+  >
+    <defs>
+      <pattern
+        id="map-dots"
+        width="14"
+        height="14"
+        patternUnits="userSpaceOnUse"
+      >
+        <circle cx="1" cy="1" r="0.6" fill="rgba(255,255,255,0.10)"></circle>
+      </pattern>
+    </defs>
+
+    <!-- Faint dot grid backdrop -->
+    <rect width="320" height="540" fill="url(#map-dots)"></rect>
+
+    <!-- Subtle river hints — long thin parallel lines on each side -->
+    <g stroke="rgba(255,255,255,0.06)" stroke-width="0.8" fill="none">
+      <path d="M 90 60 Q 100 280 110 500" stroke-dasharray="2 6"></path>
+      <path d="M 240 60 Q 235 280 240 500" stroke-dasharray="2 6"></path>
+    </g>
+
+    <!-- Manhattan outline (stylized) -->
+    <path
+      d="M 178 30
+         C 198 56, 208 102, 206 158
+         C 210 210, 214 282, 208 354
+         C 206 418, 198 466, 192 498
+         L 184 520
+         L 174 530
+         L 162 524
+         C 152 504, 150 458, 148 408
+         C 144 340, 142 268, 146 200
+         C 150 142, 158 84, 168 50
+         L 178 30 Z"
+      stroke="rgba(255,255,255,0.65)"
+      stroke-width="1.4"
+      stroke-linejoin="round"
+    ></path>
+
+    <!-- Central Park hint — thin tilted rectangle in upper-mid Manhattan -->
+    <rect
+      x="166"
+      y="220"
+      width="22"
+      height="62"
+      transform="rotate(-2, 177, 251)"
+      stroke="rgba(255,255,255,0.18)"
+      stroke-width="0.6"
+      fill="rgba(13,60,252,0.04)"
+    ></rect>
+
+    <!-- Tiny grid lines hinting at street grid (mid-Manhattan only) -->
+    <g stroke="rgba(255,255,255,0.05)" stroke-width="0.5">
+      <line x1="150" y1="240" x2="206" y2="240"></line>
+      <line x1="150" y1="280" x2="206" y2="280"></line>
+      <line x1="150" y1="320" x2="206" y2="320"></line>
+      <line x1="150" y1="360" x2="206" y2="360"></line>
+    </g>
+  </svg>
+
+  <!-- HTML markers layered over the SVG so we can use CSS :hover tooltips -->
+  {
+    markers.map((m) => (
+      <a
+        href={m.href}
+        class="marker"
+        style={`left: ${m.x}%; top: ${m.y}%`}
+        aria-label={`${m.name} — ${m.tagline}. Click to view case study.`}
+      >
+        <span class="marker-ring" aria-hidden="true" />
+        <span class="marker-dot" aria-hidden="true" />
+        <span class="tip" role="tooltip">
+          <span class="tip-name">{m.name}</span>
+          <span class="tip-tag">{m.tagline}</span>
+        </span>
+      </a>
+    ))
+  }
+
+  <!-- Subtle legend -->
+  <div class="legend">
+    <span class="legend-dot" aria-hidden="true" />
+    <span>Clients in NYC</span>
+  </div>
+</div>
+
+<style>
+  .map-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 340px;
+    aspect-ratio: 320 / 540;
+    margin: 0 auto;
+  }
+  .map-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    filter: drop-shadow(0 0 32px rgba(13, 60, 252, 0.12));
+  }
+
+  .marker {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    margin: -12px 0 0 -12px;
+    display: grid;
+    place-items: center;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  .marker-dot {
+    position: relative;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #0d3cfc;
+    border: 1.5px solid #ffffff;
+    box-shadow: 0 0 10px rgba(13, 60, 252, 0.7);
+    z-index: 2;
+  }
+
+  .marker-ring {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(13, 60, 252, 0.35);
+    animation: marker-pulse 2.4s ease-out infinite;
+    z-index: 1;
+  }
+
+  @keyframes marker-pulse {
+    0% { transform: scale(0.5); opacity: 0.7; }
+    100% { transform: scale(2.4); opacity: 0; }
+  }
+
+  /* Tooltip pill — hidden until hover/focus */
+  .tip {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    background: rgba(22, 22, 22, 0.96);
+    color: #ffffff;
+    padding: 7px 11px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 160ms ease, transform 160ms ease;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+    z-index: 3;
+  }
+  .tip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: rgba(22, 22, 22, 0.96);
+  }
+  .tip-name {
+    font-family: "Geist Sans", sans-serif;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .tip-tag {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.55);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .marker:hover .tip,
+  .marker:focus-visible .tip {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Marker hover state — bump the dot */
+  .marker:hover .marker-dot,
+  .marker:focus-visible .marker-dot {
+    box-shadow: 0 0 16px rgba(13, 60, 252, 0.95);
+    transform: scale(1.15);
+    transition: transform 160ms ease, box-shadow 160ms ease;
+  }
+
+  .legend {
+    position: absolute;
+    bottom: 12px;
+    left: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .legend-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #0d3cfc;
+    box-shadow: 0 0 6px rgba(13, 60, 252, 0.7);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marker-ring {
+      animation: none;
+      opacity: 0.3;
+    }
+  }
+</style>
