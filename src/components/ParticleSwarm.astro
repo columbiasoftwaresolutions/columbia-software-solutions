@@ -125,8 +125,10 @@
   const FONT_SIZE_VW = 10;
   const HOLD_MS = 3500;
   const GAP_MS = 1000;
-  const REPEL_RADIUS = 70;
-  const REPEL_RADIUS_SQ = REPEL_RADIUS * REPEL_RADIUS;
+  // Black-hole attraction: large gravity well, quadratic falloff so
+  // distant particles drift gently and close ones get yanked in.
+  const ATTRACT_RADIUS = 180;
+  const ATTRACT_RADIUS_SQ = ATTRACT_RADIUS * ATTRACT_RADIUS;
 
   const init = async () => {
     const canvas = document.getElementById(
@@ -268,14 +270,17 @@
           p.ty = p.baseTy;
         }
 
-        // Mouse repulsion within REPEL_RADIUS
+        // Black-hole attraction: pull nearby particles toward the cursor.
+        // Quadratic falloff so far-out particles drift gently and close
+        // ones accelerate hard, mimicking gravity.
         if (isMouseOver) {
-          const dx = p.x - breath;
-          const dy = p.y - breathY;
+          const dx = breath - p.x;
+          const dy = breathY - p.y;
           const dSq = dx * dx + dy * dy;
-          if (dSq < REPEL_RADIUS_SQ && dSq > 0.5) {
+          if (dSq < ATTRACT_RADIUS_SQ && dSq > 4) {
             const d = Math.sqrt(dSq);
-            const force = ((REPEL_RADIUS - d) / REPEL_RADIUS) * 150;
+            const t = (ATTRACT_RADIUS - d) / ATTRACT_RADIUS; // 0..1
+            const force = t * t * 9;
             p.vx += (dx / d) * force;
             p.vy += (dy / d) * force;
           }
