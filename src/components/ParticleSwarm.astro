@@ -1,0 +1,430 @@
+---
+/**
+ * ParticleSwarm — full-section canvas where ~3500 particles swarm into
+ * a phrase, hold, scatter, and re-form into the next phrase on a loop.
+ * Mouse-repels nearby particles. Replaces the WhatWeDo section.
+ */
+---
+
+<section id="work" class="swarm-section reveal">
+  <p class="eyebrow swarm-eyebrow">What we do</p>
+
+  <canvas id="swarm-canvas" class="swarm-canvas" aria-hidden="true"></canvas>
+
+  <div id="swarm-cursor" class="swarm-cursor" aria-hidden="true"></div>
+
+  <div class="phrase-indicator" aria-hidden="true">
+    <span class="phrase-dot" data-index="0"></span>
+    <span class="phrase-dot" data-index="1"></span>
+    <span class="phrase-dot" data-index="2"></span>
+  </div>
+
+  {/* Accessible fallback so screen readers + non-JS users get the content */}
+  <p class="sr-only">
+    What we do. Real clients. Real code. Free. A small team. One semester.
+    Guided by industry advisors.
+  </p>
+</section>
+
+<style>
+  .swarm-section {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    overflow: hidden;
+    cursor: none;
+  }
+
+  .swarm-eyebrow {
+    position: absolute;
+    top: 28px;
+    left: 6vw;
+    z-index: 3;
+    pointer-events: none;
+  }
+  @media (min-width: 768px) {
+    .swarm-eyebrow {
+      top: 40px;
+      left: 10vw;
+    }
+  }
+
+  .swarm-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    z-index: 1;
+  }
+
+  /* Custom cursor: faint circle that follows the pointer inside the section. */
+  .swarm-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 44px;
+    height: 44px;
+    border: 1px solid rgba(26, 26, 24, 0.35);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 180ms ease;
+    will-change: transform;
+  }
+  .swarm-cursor.is-active {
+    opacity: 1;
+  }
+
+  .phrase-indicator {
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 3;
+  }
+  @media (min-width: 768px) {
+    .phrase-indicator {
+      bottom: 40px;
+    }
+  }
+
+  .phrase-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(26, 26, 24, 0.22);
+    transition:
+      background 320ms ease,
+      transform 320ms ease;
+  }
+  .phrase-dot.is-active {
+    background: rgba(26, 26, 24, 0.75);
+    transform: scale(1.25);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .swarm-section {
+      cursor: auto;
+    }
+    .swarm-cursor {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  type Particle = {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    tx: number;
+    ty: number;
+    baseTx: number;
+    baseTy: number;
+    hasTarget: boolean;
+    radius: number;
+    phase: number;
+  };
+
+  const PHRASES = [
+    "Real clients.\nReal code. Free.",
+    "A small team.\nOne semester.",
+    "Guided by\nindustry advisors.",
+  ];
+  const NUM_PARTICLES = 3500;
+  const SAMPLE_STEP = 3;
+  const FONT_SIZE_VW = 10;
+  const HOLD_MS = 3500;
+  const GAP_MS = 1000;
+  const REPEL_RADIUS = 70;
+  const REPEL_RADIUS_SQ = REPEL_RADIUS * REPEL_RADIUS;
+
+  const init = async () => {
+    const canvas = document.getElementById(
+      "swarm-canvas",
+    ) as HTMLCanvasElement | null;
+    const cursor = document.getElementById(
+      "swarm-cursor",
+    ) as HTMLElement | null;
+    const section = canvas?.closest(".swarm-section") as HTMLElement | null;
+    const dots = document.querySelectorAll<HTMLElement>(".phrase-dot");
+
+    if (!canvas || !cursor || !section) return;
+    if ((canvas as any).__swarmInit) return;
+    (canvas as any).__swarmInit = true;
+
+    const ctx = canvas.getContext("2d", { alpha: true });
+    if (!ctx) return;
+
+    const offscreen = document.createElement("canvas");
+    const offCtx = offscreen.getContext("2d", { willReadFrequently: true });
+    if (!offCtx) return;
+
+    let particles: Particle[] = [];
+    let currentIndex = 0;
+    let mouseX = -9999;
+    let mouseY = -9999;
+    let isMouseOver = false;
+    let holdTimer: number | null = null;
+    let gapTimer: number | null = null;
+    let rafId: number | null = null;
+    let time = 0;
+    let logicalW = 0;
+    let logicalH = 0;
+
+    const sizeCanvas = () => {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      logicalW = rect.width;
+      logicalH = rect.height;
+      canvas.width = Math.max(1, Math.floor(rect.width * dpr));
+      canvas.height = Math.max(1, Math.floor(rect.height * dpr));
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.scale(dpr, dpr);
+      offscreen.width = Math.max(1, Math.floor(rect.width));
+      offscreen.height = Math.max(1, Math.floor(rect.height));
+    };
+
+    const samplePhrase = (phrase: string): Array<[number, number]> => {
+      const lines = phrase.split("\n");
+      const fontSizePx = window.innerWidth * (FONT_SIZE_VW / 100);
+      const w = offscreen.width;
+      const h = offscreen.height;
+
+      offCtx.clearRect(0, 0, w, h);
+      offCtx.fillStyle = "#000";
+      offCtx.font = `${fontSizePx}px Georgia, "Times New Roman", serif`;
+      offCtx.textAlign = "center";
+      offCtx.textBaseline = "middle";
+
+      const lineHeight = fontSizePx * 1.1;
+      const totalHeight = lineHeight * lines.length;
+      const startY = (h - totalHeight) / 2 + lineHeight / 2;
+
+      for (let i = 0; i < lines.length; i++) {
+        offCtx.fillText(lines[i], w / 2, startY + i * lineHeight);
+      }
+
+      const imgData = offCtx.getImageData(0, 0, w, h);
+      const data = imgData.data;
+      const points: Array<[number, number]> = [];
+
+      for (let y = 0; y < h; y += SAMPLE_STEP) {
+        const rowStart = y * w * 4;
+        for (let x = 0; x < w; x += SAMPLE_STEP) {
+          if (data[rowStart + x * 4 + 3] > 128) {
+            points.push([x, y]);
+          }
+        }
+      }
+      return points;
+    };
+
+    const shuffle = <T,>(arr: T[]): T[] => {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    };
+
+    const assignTargets = (points: Array<[number, number]>) => {
+      const shuffled = shuffle([...points]);
+      const n = particles.length;
+      const m = shuffled.length;
+      for (let i = 0; i < n; i++) {
+        const p = particles[i];
+        if (i < m) {
+          const pt = shuffled[i];
+          p.baseTx = pt[0];
+          p.baseTy = pt[1];
+          p.hasTarget = true;
+        } else {
+          p.baseTx = Math.random() * logicalW;
+          p.baseTy = Math.random() * logicalH;
+          p.hasTarget = false;
+        }
+      }
+    };
+
+    const scatter = () => {
+      for (const p of particles) {
+        p.baseTx = Math.random() * logicalW;
+        p.baseTy = Math.random() * logicalH;
+        p.hasTarget = false;
+      }
+    };
+
+    const updateIndicator = () => {
+      dots.forEach((dot, i) => {
+        dot.classList.toggle("is-active", i === currentIndex);
+      });
+    };
+
+    const animate = () => {
+      ctx.clearRect(0, 0, logicalW, logicalH);
+      ctx.fillStyle = "rgba(26, 26, 24, 0.85)";
+
+      time += 0.016;
+      const breath = isMouseOver ? mouseX : NaN;
+      const breathY = isMouseOver ? mouseY : NaN;
+
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+
+        // Breathing: small sine offset on the target while a phrase is formed.
+        if (p.hasTarget) {
+          const b = Math.sin(time * 1.4 + p.phase) * 1.4;
+          p.tx = p.baseTx + b;
+          p.ty = p.baseTy + Math.cos(time * 1.4 + p.phase) * 1.4;
+        } else {
+          p.tx = p.baseTx;
+          p.ty = p.baseTy;
+        }
+
+        // Mouse repulsion within REPEL_RADIUS
+        if (isMouseOver) {
+          const dx = p.x - breath;
+          const dy = p.y - breathY;
+          const dSq = dx * dx + dy * dy;
+          if (dSq < REPEL_RADIUS_SQ && dSq > 0.5) {
+            const d = Math.sqrt(dSq);
+            const force = ((REPEL_RADIUS - d) / REPEL_RADIUS) * 2.4;
+            p.vx += (dx / d) * force;
+            p.vy += (dy / d) * force;
+          }
+        }
+
+        // Spring physics
+        p.vx += (p.tx - p.x) * 0.12;
+        p.vy += (p.ty - p.y) * 0.12;
+        p.vx *= 0.78;
+        p.vy *= 0.78;
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // Render
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      rafId = requestAnimationFrame(animate);
+    };
+
+    const cyclePhrase = (index: number) => {
+      currentIndex = index;
+      const points = samplePhrase(PHRASES[index]);
+      assignTargets(points);
+      updateIndicator();
+
+      if (holdTimer) clearTimeout(holdTimer);
+      holdTimer = window.setTimeout(() => {
+        scatter();
+        if (gapTimer) clearTimeout(gapTimer);
+        gapTimer = window.setTimeout(() => {
+          cyclePhrase((index + 1) % PHRASES.length);
+        }, GAP_MS);
+      }, HOLD_MS);
+    };
+
+    // Respect prefers-reduced-motion: render a single static phrase, no loop.
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    // Wait for the font to be ready before pixel sampling, otherwise
+    // we sample a fallback font and the layout shifts visibly later.
+    await document.fonts.ready;
+
+    sizeCanvas();
+
+    // Init particles at random positions
+    particles = new Array(NUM_PARTICLES);
+    for (let i = 0; i < NUM_PARTICLES; i++) {
+      particles[i] = {
+        x: Math.random() * logicalW,
+        y: Math.random() * logicalH,
+        vx: 0,
+        vy: 0,
+        tx: 0,
+        ty: 0,
+        baseTx: 0,
+        baseTy: 0,
+        hasTarget: false,
+        radius: 1.2 + Math.random() * 0.8,
+        phase: Math.random() * Math.PI * 2,
+      };
+    }
+
+    animate();
+    if (reduceMotion) {
+      // Form the first phrase only; don't cycle/scatter.
+      const points = samplePhrase(PHRASES[0]);
+      assignTargets(points);
+      updateIndicator();
+    } else {
+      cyclePhrase(0);
+    }
+
+    // ---- Mouse events ----
+    section.addEventListener(
+      "mousemove",
+      (e) => {
+        const rect = canvas.getBoundingClientRect();
+        mouseX = e.clientX - rect.left;
+        mouseY = e.clientY - rect.top;
+        cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+      },
+      { passive: true },
+    );
+    section.addEventListener("mouseenter", () => {
+      isMouseOver = true;
+      cursor.classList.add("is-active");
+    });
+    section.addEventListener("mouseleave", () => {
+      isMouseOver = false;
+      mouseX = -9999;
+      mouseY = -9999;
+      cursor.classList.remove("is-active");
+    });
+
+    // ---- Resize: re-size canvas, re-sample, re-assign ----
+    let resizeTimer: number | null = null;
+    const handleResize = () => {
+      if (resizeTimer) clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => {
+        sizeCanvas();
+        const points = samplePhrase(PHRASES[currentIndex]);
+        assignTargets(points);
+      }, 150);
+    };
+    window.addEventListener("resize", handleResize, { passive: true });
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+  document.addEventListener("astro:after-swap", init);
+</script>
