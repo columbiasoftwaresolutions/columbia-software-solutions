@@ -9,18 +9,18 @@ const total = caseStudies.length;
 <a
   href="/projects"
   id="cases"
-  class="reveal projects-banner block py-20 md:py-24 border-b border-line group"
+  class="reveal projects-banner block py-20 md:py-24 group"
   aria-label="View all projects"
 >
   <div class="container-x">
-    <p class="eyebrow">Work</p>
+    <p class="banner-eyebrow">Work</p>
     <div class="mt-5 grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-10 items-end">
       <div class="md:col-span-9">
-        <h2 class="display text-[clamp(40px,6vw,80px)] text-fg leading-[1]">
+        <h2 class="display text-[clamp(40px,6vw,80px)] leading-[1]">
           Our projects.
           <span class="banner-arrow" aria-hidden="true">→</span>
         </h2>
-        <p class="mt-6 max-w-[60ch] text-[17px] md:text-[18px] leading-[1.55] text-fg/75">
+        <p class="mt-6 max-w-[60ch] text-[17px] md:text-[18px] leading-[1.55] banner-sub">
           {total} client engagements — {shipped} shipped, {inProgress} in progress.
         </p>
       </div>
@@ -33,23 +33,39 @@ const total = caseStudies.length;
 
 <style>
   .projects-banner {
-    color: inherit;
+    background: var(--hero-accent);
+    color: #ffffff;
     text-decoration: none;
     transition: background 200ms ease;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
   .projects-banner:hover {
-    background: var(--bg-alt);
+    background: rgb(var(--accent-dark-rgb));
   }
   .projects-banner:focus-visible {
-    outline: 2px solid var(--fg);
+    outline: 2px solid #ffffff;
     outline-offset: -6px;
+  }
+
+  .banner-eyebrow {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .banner-sub {
+    color: rgba(255, 255, 255, 0.85);
   }
 
   .banner-arrow {
     display: inline-block;
     margin-left: 0.1em;
     transition: transform 220ms cubic-bezier(0.2, 0.7, 0.2, 1);
-    color: var(--fg);
+    color: #ffffff;
   }
   .projects-banner:hover .banner-arrow {
     transform: translateX(0.18em);
@@ -63,13 +79,13 @@ const total = caseStudies.length;
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: var(--muted);
-    border-bottom: 1px solid var(--line);
+    color: rgba(255, 255, 255, 0.75);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
     padding-bottom: 4px;
     transition: color 200ms, border-color 200ms;
   }
   .projects-banner:hover .view-cta {
-    color: var(--fg);
-    border-color: var(--fg);
+    color: #ffffff;
+    border-color: #ffffff;
   }
 </style>
