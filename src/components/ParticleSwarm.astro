@@ -130,9 +130,13 @@
   // Mobile uses the same sample step as desktop so the letter
   // glyphs get enough target points to read crisply. Particle
   // count is lower because mobile GPUs are slower.
-  const NUM_PARTICLES = IS_SMALL ? 1500 : 3500;
+  const NUM_PARTICLES = IS_SMALL ? 1300 : 3500;
   const SAMPLE_STEP = 3;
   const FONT_SIZE_VW = IS_SMALL ? 13 : 10;
+  // Smaller particle radius on mobile so individual dots stay
+  // visible inside the smaller-on-screen letter strokes.
+  const RADIUS_BASE = IS_SMALL ? 0.7 : 1.2;
+  const RADIUS_JITTER = IS_SMALL ? 0.5 : 0.8;
   const HOLD_MS = 3500;
   const GAP_MS = 1000;
   // Black-hole attraction: large gravity well, quadratic falloff so
@@ -370,7 +374,7 @@
         baseTx: 0,
         baseTy: 0,
         hasTarget: false,
-        radius: 1.2 + Math.random() * 0.8,
+        radius: RADIUS_BASE + Math.random() * RADIUS_JITTER,
         phase: Math.random() * Math.PI * 2,
       };
     }
