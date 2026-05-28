@@ -26,7 +26,7 @@ export const hero = {
   eyebrow: null,
   headline: "Free software for NYC.",
   subhead:
-    "Columbia Software Solutions: free software for nonprofits and small businesses. We scope, build, and ship in 1–2 months. Built and run by Columbia students. Started in NYC, Spring 2026.",
+    "Columbia Software Solutions: free software for nonprofits and small businesses. We scope, build, and ship in a term. Built and run by Columbia students.",
   primaryCta: { label: "Join the waitlist", href: WAITLIST_URL },
   ghostCta: { label: "Work with us", href: CONTACT_URL },
 };
