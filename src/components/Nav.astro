@@ -170,10 +170,12 @@ import { nav, hero, WAITLIST_URL } from "../content";
 </style>
 
 <script>
-  const nav = document.getElementById("site-nav");
-  const brand = document.getElementById("brand-text") as HTMLElement | null;
-  const LONG = brand?.dataset.long ?? "Columbia Software Solutions";
-  const SHORT = brand?.dataset.short ?? "CSS";
+  // Re-query on every page (after-swap) because Astro view transitions
+  // replace DOM nodes — stale references point to detached elements.
+  let nav: HTMLElement | null = document.getElementById("site-nav");
+  let brand: HTMLElement | null = document.getElementById("brand-text");
+  let LONG = brand?.dataset.long ?? "Columbia Software Solutions";
+  let SHORT = brand?.dataset.short ?? "CSS";
   const SCRAMBLE_THRESHOLD = 80;
 
   const update = () => {
@@ -305,9 +307,20 @@ import { nav, hero, WAITLIST_URL } from "../content";
   );
   window.addEventListener("resize", checkMerge, { passive: true });
   document.addEventListener("astro:after-swap", () => {
+    // Astro view transitions swap the DOM — re-query the elements so
+    // we're not holding references to detached nodes from the prior
+    // page render. Without this, brand.textContent updates the OLD
+    // (removed) element and the visible header stays stuck.
+    nav = document.getElementById("site-nav");
+    brand = document.getElementById("brand-text");
+    if (brand) {
+      LONG = brand.dataset.long ?? "Columbia Software Solutions";
+      SHORT = brand.dataset.short ?? "CSS";
+    }
     update();
     brandState = "long";
     if (brand) brand.textContent = LONG;
+    if (nav) nav.dataset.brand = "long";
     checkBrand();
     checkMerge();
   });
