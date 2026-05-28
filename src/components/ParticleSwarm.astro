@@ -120,14 +120,17 @@
     "A small team.\nOne semester.",
     "Guided by\nindustry advisors.",
   ];
-  const NUM_PARTICLES = 3500;
-  const SAMPLE_STEP = 3;
-  const FONT_SIZE_VW = 10;
+  const IS_SMALL = window.innerWidth < 768;
+  // Lower particle count + larger sample step on small viewports so
+  // mobile GPUs aren't smoked. Still dense enough for legible text.
+  const NUM_PARTICLES = IS_SMALL ? 1800 : 3500;
+  const SAMPLE_STEP = IS_SMALL ? 4 : 3;
+  const FONT_SIZE_VW = IS_SMALL ? 13 : 10;
   const HOLD_MS = 3500;
   const GAP_MS = 1000;
   // Black-hole attraction: large gravity well, quadratic falloff so
   // distant particles drift gently and close ones get yanked in.
-  const ATTRACT_RADIUS = 180;
+  const ATTRACT_RADIUS = IS_SMALL ? 130 : 180;
   const ATTRACT_RADIUS_SQ = ATTRACT_RADIUS * ATTRACT_RADIUS;
 
   const init = async () => {
@@ -358,7 +361,7 @@
       cyclePhrase(0);
     }
 
-    // ---- Mouse events ----
+    // ---- Pointer events: mouse + touch ----
     section.addEventListener(
       "mousemove",
       (e) => {
@@ -376,6 +379,39 @@
       mouseX = -9999;
       mouseY = -9999;
     });
+
+    // Touch: track finger position while it's on the section so mobile
+    // gets the same black-hole interaction as desktop hover.
+    section.addEventListener(
+      "touchstart",
+      (e) => {
+        if (e.touches.length === 0) return;
+        const t = e.touches[0];
+        const rect = canvas.getBoundingClientRect();
+        mouseX = t.clientX - rect.left;
+        mouseY = t.clientY - rect.top;
+        isMouseOver = true;
+      },
+      { passive: true },
+    );
+    section.addEventListener(
+      "touchmove",
+      (e) => {
+        if (e.touches.length === 0) return;
+        const t = e.touches[0];
+        const rect = canvas.getBoundingClientRect();
+        mouseX = t.clientX - rect.left;
+        mouseY = t.clientY - rect.top;
+      },
+      { passive: true },
+    );
+    const releaseTouch = () => {
+      isMouseOver = false;
+      mouseX = -9999;
+      mouseY = -9999;
+    };
+    section.addEventListener("touchend", releaseTouch, { passive: true });
+    section.addEventListener("touchcancel", releaseTouch, { passive: true });
 
     // ---- Resize: re-size canvas, re-sample, re-assign ----
     let resizeTimer: number | null = null;
