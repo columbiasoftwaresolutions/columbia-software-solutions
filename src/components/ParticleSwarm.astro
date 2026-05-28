@@ -275,7 +275,7 @@
           const dSq = dx * dx + dy * dy;
           if (dSq < REPEL_RADIUS_SQ && dSq > 0.5) {
             const d = Math.sqrt(dSq);
-            const force = ((REPEL_RADIUS - d) / REPEL_RADIUS) * 7.2;
+            const force = ((REPEL_RADIUS - d) / REPEL_RADIUS) * 20;
             p.vx += (dx / d) * force;
             p.vy += (dy / d) * force;
           }
