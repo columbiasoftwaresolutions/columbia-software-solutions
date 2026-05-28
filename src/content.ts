@@ -136,11 +136,13 @@ export const caseStudies: CaseStudy[] = [
   {
     id: "icatalyst",
     status: "in-progress",
-    coords: [38.9286, -77.2169], // 7925 Jones Branch Dr, McLean, VA
+    // Remote engagement — pin placed at Columbia (Mudd / CS building)
+    // so the map stays focused on Manhattan. Client HQ noted in body.
+    coords: [40.8101, -73.9603],
     clientName: "iCatalyst, Inc.",
-    tagline: "AI / ML / NLP — McLean, VA",
+    tagline: "AI / ML / NLP — Remote engagement",
     description:
-      "AI/ML/NLP/RPA technology firm serving federal and commercial clients since 2007. Engagement in progress — scope details after launch.",
+      "AI/ML/NLP/RPA technology firm serving federal and commercial clients since 2007. Headquartered in McLean, VA. Engagement in progress — scope details after launch.",
     url: "https://www.icatalystinc.com",
     imageAlt: "iCatalyst engagement — coming soon",
     image: null,
