@@ -293,15 +293,12 @@ const markerData = caseStudies.map((c) => ({
         `<span class="css-popup-name">${m.name}</span>` +
           `<span class="css-popup-tag">${m.tag}</span>` +
           `<span class="css-popup-status">${statusLabel}</span>` +
-          `<a class="css-popup-cta" href="#case-${m.id}">View on page →</a>`,
+          `<a class="css-popup-cta" href="/projects#case-${m.id}">View project →</a>`,
         { closeButton: false, offset: L.point(0, -4) },
       );
       marker.on("mouseover", () => marker.openPopup());
       marker.on("click", () => {
-        const target = document.getElementById(`case-${m.id}`);
-        if (target) {
-          target.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
+        window.location.href = `/projects#case-${m.id}`;
       });
     }
     group.addTo(map);

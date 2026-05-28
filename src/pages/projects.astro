@@ -2,39 +2,28 @@
 import Layout from "../layouts/Layout.astro";
 import Banner from "../components/Banner.astro";
 import Nav from "../components/Nav.astro";
-import Hero from "../components/Hero.astro";
-import Advisors from "../components/Advisors.astro";
-import WhatWeDo from "../components/WhatWeDo.astro";
-import ProjectsBanner from "../components/ProjectsBanner.astro";
-import ForStudents from "../components/ForStudents.astro";
-import ForClients from "../components/ForClients.astro";
-import Team from "../components/Team.astro";
-import FinalCTA from "../components/FinalCTA.astro";
+import CaseStudies from "../components/CaseStudies.astro";
 import Footer from "../components/Footer.astro";
 ---
 
-<Layout>
+<Layout
+  title="Projects"
+  description="Client engagements built by Columbia Software Solutions — shipped work and projects currently in progress."
+>
   <Banner />
   <Nav />
-  <main>
-    <Hero />
-    <Advisors />
-    <WhatWeDo />
-    <ProjectsBanner />
-    <ForStudents />
-    <ForClients />
-    <Team />
-    <FinalCTA />
+  <main class="pt-28 md:pt-32">
+    <CaseStudies />
   </main>
   <Footer />
 </Layout>
 
 <script>
   // Scroll-triggered reveal — IntersectionObserver, progressive enhancement.
+  // (Same as home page; lives here so /projects gets the same fade-in.)
   const setup = () => {
     const els = document.querySelectorAll(".reveal");
     if (!("IntersectionObserver" in window)) return;
-    // Arm the hide-state only after JS loads, so non-JS users see content.
     els.forEach((el) => el.classList.add("reveal-armed"));
     const io = new IntersectionObserver(
       (entries) => {

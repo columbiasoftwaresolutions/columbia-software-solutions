@@ -14,10 +14,11 @@ export const CONTACT_URL = `https://mail.google.com/mail/?view=cm&fs=1&to=${enco
 
 export const nav = {
   links: [
-    { label: "Work", href: "#work" },
-    { label: "Advisors", href: "#advisors" },
-    { label: "Join", href: "#join" },
-    { label: "For Clients", href: "#for-clients" },
+    { label: "Work", href: "/#work" },
+    { label: "Projects", href: "/projects" },
+    { label: "Advisors", href: "/#advisors" },
+    { label: "Join", href: "/#join" },
+    { label: "For Clients", href: "/#for-clients" },
   ],
 };
 
