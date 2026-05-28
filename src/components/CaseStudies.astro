@@ -4,7 +4,7 @@ import { caseStudies } from "../content";
 
 <section id="cases" class="reveal py-20 md:py-24 border-b border-line">
   <div class="container-x">
-    <p class="eyebrow">Case Study — Spring 2026</p>
+    <p class="eyebrow">Case Studies — Spring 2026</p>
     <h2 class="display mt-5 max-w-[18ch] text-[clamp(34px,5vw,64px)] text-fg">
       Shipped work.
     </h2>
@@ -65,6 +65,12 @@ import { caseStudies } from "../content";
                     </div>
                   ))}
                 </dl>
+
+                {cs.builders && cs.builders.length > 0 && (
+                  <p class="mt-6 text-[12px] uppercase tracking-eyebrow text-muted">
+                    Built by {cs.builders.join(" & ")}
+                  </p>
+                )}
 
                 {cs.press && (
                   <div class="mt-8">

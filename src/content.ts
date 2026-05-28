@@ -70,6 +70,8 @@ export type CaseStudy = {
   stats: { value: string; label: string }[];
   stack?: string[];
   press?: { label: string; href: string };
+  /** CSS team members who built the project. */
+  builders?: string[];
   imageAlt: string;
   /** Optional image path under /public, e.g. "/projects/refettorio.jpg". */
   image?: string | null;
@@ -101,6 +103,21 @@ export const caseStudies: CaseStudy[] = [
     },
     imageAlt: "Refettorio Harlem check-in tablet UI",
     image: "/projects/refettorio.png",
+  },
+  {
+    clientName: "Columbia Swipe Market",
+    tagline: "[Sector — Borough]",
+    description:
+      "[Short project description — TODO: what does Columbia Swipe Market do?]",
+    stats: [
+      { value: "—", label: "stat 1 — TODO" },
+      { value: "—", label: "stat 2 — TODO" },
+      { value: "—", label: "stat 3 — TODO" },
+    ],
+    stack: ["[stack item — TODO]"],
+    builders: ["Owen Terry", "Caroline Smyth"],
+    imageAlt: "Columbia Swipe Market product UI",
+    image: null,
   },
 ];
 
