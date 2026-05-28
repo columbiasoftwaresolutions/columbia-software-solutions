@@ -28,10 +28,16 @@
   .swarm-section {
     position: relative;
     width: 100%;
+    /* 100svh = small viewport height — stable on mobile Safari when
+       the URL bar shows/hides. Fallback to 100vh for older browsers. */
     min-height: 100vh;
+    min-height: 100svh;
     background: var(--bg);
     border-bottom: 1px solid var(--line);
     overflow: hidden;
+    /* Prevent the page from hijacking touches on this section so the
+       browser doesn't fire artificial pointer events differently. */
+    touch-action: pan-y;
   }
 
   .swarm-eyebrow {
@@ -165,15 +171,19 @@
 
     const sizeCanvas = () => {
       const rect = canvas.getBoundingClientRect();
+      // Fallback to viewport size if the canvas hasn't been laid out yet
+      // (mobile Safari sometimes reports 0 here on first paint).
+      const w = rect.width || window.innerWidth;
+      const h = rect.height || window.innerHeight;
       const dpr = window.devicePixelRatio || 1;
-      logicalW = rect.width;
-      logicalH = rect.height;
-      canvas.width = Math.max(1, Math.floor(rect.width * dpr));
-      canvas.height = Math.max(1, Math.floor(rect.height * dpr));
+      logicalW = w;
+      logicalH = h;
+      canvas.width = Math.max(1, Math.floor(w * dpr));
+      canvas.height = Math.max(1, Math.floor(h * dpr));
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.scale(dpr, dpr);
-      offscreen.width = Math.max(1, Math.floor(rect.width));
-      offscreen.height = Math.max(1, Math.floor(rect.height));
+      offscreen.width = Math.max(1, Math.floor(w));
+      offscreen.height = Math.max(1, Math.floor(h));
     };
 
     const samplePhrase = (phrase: string): Array<[number, number]> => {
@@ -424,6 +434,18 @@
       }, 150);
     };
     window.addEventListener("resize", handleResize, { passive: true });
+    // Orientation change on mobile = different viewport, re-init.
+    window.addEventListener("orientationchange", handleResize, {
+      passive: true,
+    });
+
+    // ResizeObserver catches the case where the canvas grows after first
+    // paint (mobile Safari URL bar collapse, async layout) — without
+    // this, the canvas can stay at 0 size and nothing renders.
+    if ("ResizeObserver" in window) {
+      const ro = new ResizeObserver(() => handleResize());
+      ro.observe(canvas);
+    }
   };
 
   if (document.readyState === "loading") {
