@@ -117,7 +117,7 @@ export const caseStudies: CaseStudy[] = [
     stack: ["Flask", "PostgreSQL", "Google OAuth", "Gmail API", "Render"],
     attribution: "Originally built by Owen Terry & Caroline Smyth",
     imageAlt: "Columbia Swipe Market product UI",
-    image: null,
+    image: "/projects/swipemarket.png",
   },
 ];
 
