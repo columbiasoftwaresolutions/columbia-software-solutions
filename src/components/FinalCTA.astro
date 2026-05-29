@@ -132,11 +132,17 @@ import { ctas } from "../content";
   //   Phase 1 — anchor enters viewport -> thin black bar (5% height)
   //   Phase 2 — anchor advances toward middle -> bar grows to full
   // Fast scrolls map 1:1 (no queued long transition), no glitching.
-  const fill = document.getElementById("cta-fill");
-  const nav = document.getElementById("site-nav");
-  const anchor = document.querySelector(".cta-anchor") as HTMLElement | null;
-  const content = fill?.querySelector(".cta-content") as HTMLElement | null;
-  const dots = fill?.querySelector(".cta-dots") as HTMLElement | null;
+  //
+  // References are `let` (not `const`) because Astro view transitions
+  // swap the DOM — we need to re-query on every astro:after-swap or
+  // the script ends up holding handles to detached nodes (and the
+  // "Build with us" reveal stops working after navigation).
+  let fill: HTMLElement | null = document.getElementById("cta-fill");
+  let nav: HTMLElement | null = document.getElementById("site-nav");
+  let anchor: HTMLElement | null = document.querySelector(".cta-anchor");
+  let content: HTMLElement | null =
+    fill?.querySelector(".cta-content") ?? null;
+  let dots: HTMLElement | null = fill?.querySelector(".cta-dots") ?? null;
   const BAR_MIN = 0.05;
   let ticking = false;
 
@@ -183,5 +189,13 @@ import { ctas } from "../content";
   check();
   window.addEventListener("scroll", check, { passive: true });
   window.addEventListener("resize", check, { passive: true });
-  document.addEventListener("astro:after-swap", check);
+  document.addEventListener("astro:after-swap", () => {
+    // Re-query — the DOM nodes from the prior render are gone.
+    fill = document.getElementById("cta-fill");
+    nav = document.getElementById("site-nav");
+    anchor = document.querySelector(".cta-anchor");
+    content = fill?.querySelector(".cta-content") ?? null;
+    dots = fill?.querySelector(".cta-dots") ?? null;
+    check();
+  });
 </script>
