@@ -127,15 +127,15 @@
     "Guided by\nindustry advisors.",
   ];
   const IS_SMALL = window.innerWidth < 768;
-  // Mobile uses the same sample step as desktop so the letter
-  // glyphs get enough target points to read crisply. Particle
-  // count is lower because mobile GPUs are slower.
-  const NUM_PARTICLES = IS_SMALL ? 1800 : 3500;
-  const SAMPLE_STEP = 3;
+  // Mobile: denser sampling so each glyph gets ~4x more target points
+  // — letters fill in instead of reading as spaced dots. Particle
+  // count bumped to match the new target supply.
+  const NUM_PARTICLES = IS_SMALL ? 2600 : 3500;
+  const SAMPLE_STEP = IS_SMALL ? 2 : 3;
   const FONT_SIZE_VW = IS_SMALL ? 13 : 10;
-  // Smaller particle radius on mobile so individual dots stay
-  // visible inside the smaller-on-screen letter strokes.
-  const RADIUS_BASE = IS_SMALL ? 0.7 : 1.2;
+  // Slightly larger mobile radius so adjacent dots overlap and
+  // the letter strokes read as solid shapes rather than a stipple.
+  const RADIUS_BASE = IS_SMALL ? 0.9 : 1.2;
   const RADIUS_JITTER = IS_SMALL ? 0.5 : 0.8;
   const HOLD_MS = 3500;
   const GAP_MS = 1000;
