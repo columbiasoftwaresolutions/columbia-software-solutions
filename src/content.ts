@@ -145,8 +145,8 @@ export const caseStudies: CaseStudy[] = [
     description:
       "AI/ML/NLP/RPA technology firm serving federal and commercial clients since 2007. Headquartered in McLean, VA. Engagement in progress — scope details after launch.",
     url: "https://www.icatalystinc.com",
-    imageAlt: "iCatalyst engagement — coming soon",
-    image: null,
+    imageAlt: "iCatalyst, Inc. homepage",
+    image: "/projects/icatalyst.png",
   },
   {
     id: "santas-knights",
