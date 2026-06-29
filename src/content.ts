@@ -173,7 +173,7 @@ export type TeamMember = {
 export const team: TeamMember[] = [
   {
     name: "Ethan Zhang",
-    role: "Founder",
+    role: "Co-founder",
     bio: "Columbia CS '28.",
     imageAlt: "Ethan Zhang headshot",
     image: "/headshots/1729533250251.jpeg",
