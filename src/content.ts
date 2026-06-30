@@ -173,28 +173,28 @@ export type TeamMember = {
 export const team: TeamMember[] = [
   {
     name: "Ethan Zhang",
-    role: "Co-founder",
+    role: "CEO",
     bio: "Columbia CS '28.",
     imageAlt: "Ethan Zhang headshot",
     image: "/headshots/1729533250251.jpeg",
   },
   {
     name: "Kushaan Vardhan",
-    role: "Co-founder",
+    role: "COO",
     bio: "Columbia CS '28.",
     imageAlt: "Kushaan Vardhan headshot",
     image: "/headshots/1682802197159.jpeg",
   },
   {
     name: "Siddharth Rout",
-    role: "Founding Team",
+    role: "CTO",
     bio: "Columbia CS '29.",
     imageAlt: "Siddharth Rout headshot",
     image: "/headshots/1767549913519.jpeg",
   },
   {
     name: "Toffy Prakittiphoom",
-    role: "Founding Team",
+    role: "Director of Marketing",
     bio: "Columbia Econ '28.",
     imageAlt: "Toffy Prakittiphoom headshot",
     image: "/headshots/1695960659223.jpeg",
