@@ -157,8 +157,8 @@ export const caseStudies: CaseStudy[] = [
     description:
       "Harlem nonprofit providing free martial arts, fitness, and community activities, plus a Letters to Santa gifting program. Engagement in progress — scope details after launch.",
     url: "https://www.santasknights.org/",
-    imageAlt: "Santa's Knights engagement — coming soon",
-    image: null,
+    imageAlt: "Santa's Knights homepage",
+    image: "/projects/santas-knights.png",
   },
 ];
 
