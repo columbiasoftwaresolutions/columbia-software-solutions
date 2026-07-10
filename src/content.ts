@@ -62,6 +62,13 @@ export const advisors: Advisor[] = [
     imageAlt: "Hadley Callaway headshot",
     image: "/headshots/1753048604662.jpeg",
   },
+  {
+    name: "Morgan Kang",
+    role: "PM at BlackRock",
+    bio: "Founder of LionBase.",
+    imageAlt: "Morgan Kang headshot",
+    image: "/headshots/morgan-kang.jpg",
+  },
 ];
 
 export type CaseStudy = {
