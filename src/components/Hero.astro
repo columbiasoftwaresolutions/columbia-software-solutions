@@ -22,11 +22,7 @@ const tabs = [
         <h1
           class="display hero-rise hero-rise-1 text-[clamp(44px,6.4vw,92px)] text-fg"
         >
-          Free software<br />for <span class="nyc-stamp">
-            <span class="nyc-stamp-micro">Built by Columbia students</span>
-            <span class="nyc-stamp-word">NYC</span>
-            <span class="nyc-stamp-micro">Free software</span>
-          </span>.
+          Free software<br />for <span class="text-accent">NYC</span>.
         </h1>
 
         <p
@@ -85,44 +81,3 @@ const tabs = [
     </div>
   </div>
 </section>
-
-<style>
-  .nyc-stamp {
-    position: relative;
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.08em;
-    box-sizing: border-box;
-    margin-inline: 0.03em;
-    padding: 0.11em 0.16em 0.1em;
-    border: 0.035em solid var(--accent);
-    color: var(--accent);
-    line-height: 0.75;
-    transform: rotate(-1.5deg);
-    isolation: isolate;
-  }
-
-  .nyc-stamp::after {
-    position: absolute;
-    z-index: -1;
-    inset: 0.025em -0.02em -0.025em 0.02em;
-    border: 0.018em solid var(--accent);
-    content: "";
-    opacity: 0.55;
-    transform: rotate(1.2deg);
-  }
-
-  .nyc-stamp-word {
-    letter-spacing: -0.075em;
-  }
-
-  .nyc-stamp-micro {
-    font-size: 0.105em;
-    font-weight: 600;
-    letter-spacing: 0.09em;
-    line-height: 1;
-    text-transform: uppercase;
-  }
-</style>
