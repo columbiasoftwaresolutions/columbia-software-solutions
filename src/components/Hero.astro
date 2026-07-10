@@ -22,24 +22,11 @@ const tabs = [
         <h1
           class="display hero-rise hero-rise-1 text-[clamp(44px,6.4vw,92px)] text-fg"
         >
-          Free software<br />for <span class="nyc-route-label"
-            >NYC<svg
-              class="nyc-route"
-              viewBox="0 0 160 24"
-              preserveAspectRatio="none"
-              aria-hidden="true"
-            >
-              <path
-                class="nyc-route-base"
-                d="M3 7 C31 7, 36 18, 65 18 S100 6, 128 9 S145 16, 157 14"
-              />
-              <path
-                class="nyc-route-traveler"
-                d="M3 7 C31 7, 36 18, 65 18 S100 6, 128 9 S145 16, 157 14"
-              />
-              <circle class="nyc-route-stop" cx="157" cy="14" r="3.5" />
-            </svg></span
-          >.
+          Free software<br />for <span class="nyc-stamp">
+            <span class="nyc-stamp-micro">Built by Columbia students</span>
+            <span class="nyc-stamp-word">NYC</span>
+            <span class="nyc-stamp-micro">Free software</span>
+          </span>.
         </h1>
 
         <p
@@ -100,52 +87,42 @@ const tabs = [
 </section>
 
 <style>
-  .nyc-route-label {
+  .nyc-stamp {
     position: relative;
-    display: inline-block;
-    padding-bottom: 0.16em;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.08em;
+    box-sizing: border-box;
+    margin-inline: 0.03em;
+    padding: 0.11em 0.16em 0.1em;
+    border: 0.035em solid var(--accent);
+    color: var(--accent);
+    line-height: 0.75;
+    transform: rotate(-1.5deg);
+    isolation: isolate;
   }
 
-  .nyc-route {
+  .nyc-stamp::after {
     position: absolute;
-    bottom: -0.02em;
-    left: 0;
-    width: 100%;
-    height: 0.21em;
-    overflow: visible;
+    z-index: -1;
+    inset: 0.025em -0.02em -0.025em 0.02em;
+    border: 0.018em solid var(--accent);
+    content: "";
+    opacity: 0.55;
+    transform: rotate(1.2deg);
   }
 
-  .nyc-route-base,
-  .nyc-route-traveler {
-    fill: none;
-    stroke: var(--accent);
-    stroke-linecap: round;
-    vector-effect: non-scaling-stroke;
+  .nyc-stamp-word {
+    letter-spacing: -0.075em;
   }
 
-  .nyc-route-base {
-    stroke-width: 1.5;
-  }
-
-  .nyc-route-traveler {
-    stroke-width: 3;
-    stroke-dasharray: 12 260;
-    animation: nyc-route-travel 3.6s linear infinite;
-  }
-
-  .nyc-route-stop {
-    fill: var(--accent);
-  }
-
-  @keyframes nyc-route-travel {
-    to {
-      stroke-dashoffset: -272;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .nyc-route-traveler {
-      animation: none;
-    }
+  .nyc-stamp-micro {
+    font-size: 0.105em;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    line-height: 1;
+    text-transform: uppercase;
   }
 </style>
