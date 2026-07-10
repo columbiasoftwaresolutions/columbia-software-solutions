@@ -47,15 +47,15 @@ const markerData = caseStudies.map((c) => ({
     margin: 0 auto;
     overflow: hidden;
     border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--line);
     box-shadow:
-      0 24px 60px rgba(0, 0, 0, 0.45),
-      0 0 60px rgba(13, 60, 252, 0.18);
+      0 20px 50px rgba(30, 30, 30, 0.12),
+      0 0 40px rgba(63, 120, 189, 0.1);
   }
   .hero-map {
     position: absolute;
     inset: 0;
-    background: #0a0a0a;
+    background: #e8e6e1;
     z-index: 1;
   }
 
@@ -72,9 +72,9 @@ const markerData = caseStudies.map((c) => ({
     height: 14px;
     margin: -7px 0 0 -7px;
     border-radius: 50%;
-    background: #0d3cfc;
+    background: var(--accent);
     border: 2px solid #ffffff;
-    box-shadow: 0 0 10px rgba(13, 60, 252, 0.7);
+    box-shadow: 0 0 10px rgba(63, 120, 189, 0.7);
     z-index: 2;
   }
   :global(.css-marker--shipped .ring) {
@@ -85,7 +85,7 @@ const markerData = caseStudies.map((c) => ({
     height: 14px;
     margin: -7px 0 0 -7px;
     border-radius: 50%;
-    background: rgba(13, 60, 252, 0.4);
+    background: rgba(63, 120, 189, 0.4);
     animation: marker-pulse 2.4s ease-out infinite;
   }
   /* In progress: hollow ring, no pulse */
@@ -97,9 +97,9 @@ const markerData = caseStudies.map((c) => ({
     height: 14px;
     margin: -7px 0 0 -7px;
     border-radius: 50%;
-    background: transparent;
-    border: 2px solid #ffffff;
-    box-shadow: 0 0 8px rgba(13, 60, 252, 0.45);
+    background: #ffffff;
+    border: 3px solid var(--accent);
+    box-shadow: 0 0 8px rgba(63, 120, 189, 0.35);
     z-index: 2;
   }
   :global(.css-marker--in-progress .ring) {
@@ -111,22 +111,22 @@ const markerData = caseStudies.map((c) => ({
   }
   :global(.css-marker:hover .dot) {
     transform: scale(1.18);
-    box-shadow: 0 0 16px rgba(13, 60, 252, 0.95);
+    box-shadow: 0 0 16px rgba(63, 120, 189, 0.95);
     transition: transform 160ms ease, box-shadow 160ms ease;
   }
 
-  /* ---- Popup styling ---- */
+  /* ---- Popup styling (light) ---- */
   :global(.leaflet-popup-content-wrapper) {
-    background: rgba(22, 22, 22, 0.96) !important;
-    color: #fff !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    background: #ffffff !important;
+    color: var(--fg) !important;
+    border: 1px solid var(--line) !important;
     border-radius: 6px !important;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55) !important;
+    box-shadow: 0 8px 20px rgba(30, 30, 30, 0.18) !important;
     padding: 0 !important;
   }
   :global(.leaflet-popup-tip) {
-    background: rgba(22, 22, 22, 0.96) !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    background: #ffffff !important;
+    border: 1px solid var(--line) !important;
   }
   :global(.leaflet-popup-content) {
     margin: 10px 14px !important;
@@ -140,13 +140,13 @@ const markerData = caseStudies.map((c) => ({
       sans-serif;
     font-size: 13px;
     font-weight: 600;
-    color: #fff;
+    color: var(--fg);
   }
   :global(.css-popup-tag) {
     display: block;
     font-family: "JetBrains Mono", ui-monospace, monospace;
     font-size: 10px;
-    color: rgba(255, 255, 255, 0.55);
+    color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 0.07em;
     margin-top: 2px;
@@ -158,9 +158,9 @@ const markerData = caseStudies.map((c) => ({
     font-size: 9px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: rgba(255, 255, 255, 0.55);
+    color: var(--muted);
     padding: 2px 7px;
-    border: 1px solid rgba(255, 255, 255, 0.18);
+    border: 1px solid var(--line);
     border-radius: 999px;
   }
   :global(.css-popup-cta) {
@@ -169,30 +169,30 @@ const markerData = caseStudies.map((c) => ({
       "Geist Sans",
       sans-serif;
     font-size: 11px;
-    color: #7aa8ff;
+    color: var(--accent);
     margin-top: 6px;
   }
 
-  /* ---- Leaflet chrome (dark) ---- */
+  /* ---- Leaflet chrome (light) ---- */
   :global(.leaflet-control-attribution) {
-    background: rgba(0, 0, 0, 0.55) !important;
-    color: rgba(255, 255, 255, 0.45) !important;
+    background: rgba(255, 255, 255, 0.72) !important;
+    color: var(--muted) !important;
     font-size: 9px !important;
     padding: 2px 6px !important;
   }
   :global(.leaflet-control-attribution a) {
-    color: rgba(255, 255, 255, 0.6) !important;
+    color: var(--accent) !important;
   }
   :global(.leaflet-bar a) {
-    background: rgba(22, 22, 22, 0.92) !important;
-    color: rgba(255, 255, 255, 0.85) !important;
-    border-color: rgba(255, 255, 255, 0.1) !important;
+    background: rgba(255, 255, 255, 0.94) !important;
+    color: var(--fg) !important;
+    border-color: var(--line) !important;
   }
   :global(.leaflet-bar a:hover) {
-    background: rgba(40, 40, 40, 0.96) !important;
+    background: #ffffff !important;
   }
 
-  /* ---- Legend (bottom-left) ---- */
+  /* ---- Legend (bottom-left, light chip) ---- */
   .legend {
     position: absolute;
     bottom: 12px;
@@ -203,15 +203,15 @@ const markerData = caseStudies.map((c) => ({
     gap: 4px;
     font-family: "JetBrains Mono", ui-monospace, monospace;
     font-size: 10px;
-    color: rgba(255, 255, 255, 0.6);
+    color: var(--muted);
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    background: rgba(22, 22, 22, 0.82);
+    background: rgba(255, 255, 255, 0.82);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
     padding: 6px 10px;
     border-radius: 4px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--line);
     pointer-events: none;
   }
   .legend-row {
@@ -220,19 +220,17 @@ const markerData = caseStudies.map((c) => ({
     gap: 8px;
   }
   .legend-shipped {
-    width: 7px;
-    height: 7px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-    background: #0d3cfc;
-    border: 1.5px solid #fff;
-    box-shadow: 0 0 6px rgba(13, 60, 252, 0.7);
+    background: var(--accent);
   }
   .legend-progress {
-    width: 7px;
-    height: 7px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-    background: transparent;
-    border: 1.5px solid #fff;
+    background: #ffffff;
+    border: 2px solid var(--accent);
   }
 </style>
 
@@ -269,7 +267,7 @@ const markerData = caseStudies.map((c) => ({
     });
 
     L.tileLayer(
-      "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+      "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
       {
         attribution:
           '&copy; <a href="https://carto.com/attributions">CARTO</a> &middot; OSM',

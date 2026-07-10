@@ -9,7 +9,8 @@
 
 @layer base {
   :root {
-    /* DOSS-aligned palette */
+    /* One theme: warm paper ground + a single Columbia blue accent.
+       No dark grounds anywhere — the site is light + blue throughout. */
     --bg: #e6e3e0;
     --bg-rgb: 230 227 224;
     --bg-alt: #f1efed;
@@ -21,20 +22,25 @@
     --line: rgba(133, 128, 123, 0.32);
     --line-rgb: 133 128 123;
 
-    /* Hero — DOSS-style near-black with blue accents (matches their actual hero) */
-    --hero-bg: #161616;
-    --hero-bg-rgb: 22 22 22;
-    --hero-fg: #f9f9f9;
-    --hero-fg-rgb: 249 249 249;
-    --hero-muted-rgb: 230 227 224;
-    --hero-accent: #0d3cfc;
-    --hero-accent-rgb: 13 60 252;
+    /* The single accent — Columbia blue, deep enough to read with white
+       text on it and as a highlight on the paper ground. */
+    --accent: #3f78bd;
+    --accent-rgb: 63 120 189;
+    --accent-dark: #335f96;
+    --accent-dark-rgb: 51 95 150;
+    /* Light tint of the same blue, for glows / soft fills / markers. */
+    --accent-soft: #75aadb;
+    --accent-soft-rgb: 117 170 219;
 
-    /* Columbia blue retained as a tertiary accent */
-    --accent: #75aadb;
-    --accent-rgb: 117 170 219;
-    --accent-dark: #5b8fc4;
-    --accent-dark-rgb: 91 143 196;
+    /* Legacy "hero" tokens now resolve to the light theme so any leftover
+       reference renders paper + blue instead of the old near-black. */
+    --hero-bg: #e6e3e0;
+    --hero-bg-rgb: 230 227 224;
+    --hero-fg: #1e1e1e;
+    --hero-fg-rgb: 30 30 30;
+    --hero-muted-rgb: 107 102 98;
+    --hero-accent: #3f78bd;
+    --hero-accent-rgb: 63 120 189;
 
     --font-display: "Geist Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
       sans-serif;
