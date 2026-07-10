@@ -1,6 +1,13 @@
 ---
 import { caseStudies } from "../content";
 
+interface Props {
+  /** Fill the parent completely (no card border/radius/aspect) — used
+      as the full-bleed hero background. */
+  fullbleed?: boolean;
+}
+const { fullbleed = false } = Astro.props;
+
 // Pass marker data to client-side script as a JSON payload — keeps
 // the data source unified with the case studies array.
 const markerData = caseStudies.map((c) => ({
@@ -12,7 +19,7 @@ const markerData = caseStudies.map((c) => ({
 }));
 ---
 
-<div class="map-shell">
+<div class:list={["map-shell", fullbleed && "map-shell--fullbleed"]}>
   <div
     id="hero-map"
     class="hero-map"
@@ -57,6 +64,23 @@ const markerData = caseStudies.map((c) => ({
     inset: 0;
     background: #e8e6e1;
     z-index: 1;
+  }
+
+  /* Full-bleed hero-background variant — fills the parent, no card chrome. */
+  .map-shell--fullbleed {
+    max-width: none;
+    aspect-ratio: auto;
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .map-shell--fullbleed :global(.leaflet-control-zoom) {
+    display: none;
+  }
+  .map-shell--fullbleed .legend {
+    display: none;
   }
 
   /* ---- Marker variants ---- */

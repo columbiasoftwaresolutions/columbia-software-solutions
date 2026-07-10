@@ -12,16 +12,22 @@ const tabs = [
 ];
 ---
 
-<section
-  id="top"
-  class="relative isolate overflow-hidden bg-hero-bg text-hero-fg"
->
-  <div class="container-x relative pt-36 md:pt-40 pb-10 flex flex-col min-h-screen">
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-10 items-center flex-1">
-      <div class="md:col-span-7 lg:col-span-7 relative z-10">
-        <h1
-          class="display hero-rise hero-rise-1 text-[clamp(44px,6.4vw,92px)] text-fg"
-        >
+<!-- Tall scroll section: a sticky stage stays pinned while scroll
+     progress drives the choreography — centered text → text docks to
+     the side while the map reveals as a full-bleed background → text
+     re-centers and the map fades out → the hero releases into the page. -->
+<section id="top" class="hero-scroll" data-hero>
+  <div class="hero-stage">
+    <!-- Map background (fades in behind the text as you scroll) -->
+    <div class="hero-map-bg" data-hero-map aria-hidden="true">
+      <HeroMap fullbleed />
+      <div class="hero-map-scrim"></div>
+    </div>
+
+    <!-- Centered content that docks to the side mid-scroll -->
+    <div class="hero-stage-inner">
+      <div class="hero-content" data-hero-content>
+        <h1 class="display hero-rise hero-rise-1 hero-title text-fg">
           Free software<br />for&nbsp;<span class="nyc-stamp" aria-label="NYC">
             <span class="nyc-stamp-micro" aria-hidden="true">Columbia CS</span>
             <span class="nyc-stamp-word" aria-hidden="true">NYC</span>
@@ -29,16 +35,14 @@ const tabs = [
           </span>.
         </h1>
 
-        <p
-          class="hero-rise hero-rise-2 mt-7 max-w-[58ch] text-[16px] md:text-[18px] leading-[1.55] text-muted"
-        >
+        <p class="hero-rise hero-rise-2 hero-sub text-muted">
           <span class="text-fg font-medium">Columbia Software Solutions:</span>
           {" "}free software for nonprofits and small businesses. We scope,
           build, and ship in 1–2 months. Built and run by Columbia students.
           Started in NYC, Spring 2026.
         </p>
 
-        <div class="hero-rise hero-rise-3 mt-9 flex flex-wrap items-center gap-3">
+        <div class="hero-rise hero-rise-3 hero-ctas">
           <a
             href={WAITLIST_URL}
             target="_blank"
@@ -59,40 +63,124 @@ const tabs = [
           </a>
         </div>
       </div>
-
-      <div
-        class="md:col-span-5 lg:col-span-5 hero-rise hero-rise-4 flex justify-center md:justify-end"
-      >
-        <div class="w-full max-w-[440px]">
-          <HeroMap />
-        </div>
-      </div>
     </div>
 
-    <!-- Tab bar -->
-    <div
-      class="hero-rise hero-rise-5 mt-12 md:mt-16 border-t border-line pt-4"
-    >
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-x-6 gap-y-3">
-        {
-          tabs.map((t) => (
-            <div class="text-fg/80 text-[13px] font-medium tracking-tight">
-              {t.label}
-            </div>
-          ))
-        }
+    <!-- Tab bar pinned to the bottom of the stage; fades as the map appears -->
+    <div class="hero-tabs" data-hero-tabs>
+      <div class="container-x">
+        <div
+          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-x-6 gap-y-3 border-t border-line pt-4"
+        >
+          {
+            tabs.map((t) => (
+              <div class="text-fg/70 text-[13px] font-medium tracking-tight">
+                {t.label}
+              </div>
+            ))
+          }
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <style>
+  .hero-scroll {
+    position: relative;
+    height: 280vh;
+    background: var(--bg);
+    color: var(--fg);
+  }
+
+  .hero-stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* --- Map background layer --- */
+  .hero-map-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    opacity: 0;
+    pointer-events: none;
+    will-change: opacity;
+  }
+  .hero-map-scrim {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      rgba(230, 227, 224, 0.74) 0%,
+      rgba(230, 227, 224, 0.5) 45%,
+      rgba(230, 227, 224, 0.74) 100%
+    );
+  }
+
+  /* --- Centered content --- */
+  .hero-stage-inner {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    padding: 0 6vw;
+    pointer-events: none;
+  }
+  .hero-content {
+    max-width: 900px;
+    text-align: center;
+    transform: translate3d(var(--tx, 0px), 0, 0) scale(var(--s, 1));
+    transform-origin: center center;
+    will-change: transform;
+  }
+  /* Only interactive children capture pointer events — the empty content
+     area never blocks scroll, and the map never blocks a button. */
+  .hero-content :is(a, button) {
+    pointer-events: auto;
+  }
+
+  .hero-title {
+    font-size: clamp(44px, 8vw, 108px);
+    line-height: 0.95;
+  }
+  .hero-sub {
+    margin: 1.75rem auto 0;
+    max-width: 56ch;
+    font-size: clamp(15px, 1.4vw, 19px);
+    line-height: 1.55;
+  }
+  .hero-ctas {
+    margin-top: 2.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+  }
+
+  /* --- Tab bar --- */
+  .hero-tabs {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 32px;
+    z-index: 2;
+    opacity: 1;
+    pointer-events: none;
+    will-change: opacity;
+  }
+
+  /* --- NYC stamp (kept from prior hero) --- */
   .nyc-stamp {
     position: relative;
     display: inline-flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    vertical-align: middle;
     gap: 0.07em;
     min-width: 2.36em;
     margin-right: 0.04em;
@@ -106,11 +194,9 @@ const tabs = [
     line-height: 0.74;
     transform: rotate(-1.2deg);
   }
-
   .nyc-stamp-word {
     letter-spacing: -0.075em;
   }
-
   .nyc-stamp-micro {
     font-size: 0.105em;
     font-weight: 600;
@@ -118,4 +204,80 @@ const tabs = [
     line-height: 1;
     text-transform: uppercase;
   }
+
+  /* Reduced motion: no scroll choreography — static centered hero. */
+  @media (prefers-reduced-motion: reduce) {
+    .hero-scroll {
+      height: 100vh;
+    }
+    .hero-content {
+      transform: none;
+    }
+    .hero-map-bg {
+      opacity: 0;
+    }
+  }
 </style>
+
+<script>
+  const initHero = () => {
+    const section = document.querySelector(".hero-scroll") as HTMLElement | null;
+    if (!section) return;
+    const content = section.querySelector(
+      "[data-hero-content]",
+    ) as HTMLElement | null;
+    const mapBg = section.querySelector("[data-hero-map]") as HTMLElement | null;
+    const tabs = section.querySelector("[data-hero-tabs]") as HTMLElement | null;
+    if (!content) return;
+
+    const reduce = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    const clamp01 = (x: number) => Math.max(0, Math.min(1, x));
+    const easeInOut = (x: number) =>
+      x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
+
+    let ticking = false;
+    const apply = () => {
+      ticking = false;
+      const total = section.offsetHeight - window.innerHeight;
+      const p =
+        total > 0
+          ? clamp01(-section.getBoundingClientRect().top / total)
+          : 0;
+
+      // Dockedness d: 0 (centered) → 1 (docked over map) → 0 (centered).
+      let d: number;
+      if (p < 0.1) d = 0;
+      else if (p < 0.4) d = easeInOut(clamp01((p - 0.1) / 0.3));
+      else if (p < 0.58) d = 1;
+      else if (p < 0.88) d = easeInOut(1 - clamp01((p - 0.58) / 0.3));
+      else d = 0;
+
+      if (reduce) d = 0;
+
+      const isMobile = window.innerWidth < 768;
+      const maxTx = isMobile ? -14 : -28; // vw
+      const scaleDrop = isMobile ? 0.3 : 0.42;
+
+      content.style.setProperty("--tx", `${(maxTx * d).toFixed(2)}vw`);
+      content.style.setProperty("--s", (1 - scaleDrop * d).toFixed(3));
+      if (mapBg) mapBg.style.opacity = d.toFixed(3);
+      if (tabs) tabs.style.opacity = (1 - d).toFixed(3);
+    };
+
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(apply);
+    };
+
+    apply();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", apply, { passive: true });
+  };
+
+  initHero();
+  document.addEventListener("astro:after-swap", initHero);
+</script>
