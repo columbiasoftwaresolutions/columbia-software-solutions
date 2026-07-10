@@ -22,7 +22,7 @@ const tabs = [
         <h1
           class="display hero-rise hero-rise-1 text-[clamp(44px,6.4vw,92px)] text-fg"
         >
-          Free software<br />for <span class="text-accent">NYC</span>.
+          Free software<br />for <span class="text-accent nyc-swirl">NYC</span>.
         </h1>
 
         <p
@@ -81,3 +81,47 @@ const tabs = [
     </div>
   </div>
 </section>
+
+<style>
+  @property --nyc-swirl-angle {
+    syntax: "<angle>";
+    inherits: false;
+    initial-value: 0deg;
+  }
+
+  .nyc-swirl {
+    display: inline-block;
+  }
+
+  @supports ((-webkit-background-clip: text) or (background-clip: text)) {
+    .nyc-swirl {
+      color: transparent;
+      background-image: conic-gradient(
+        from var(--nyc-swirl-angle) at 50% 50%,
+        #2165b2 0deg,
+        #46b7dc 70deg,
+        #6b83e3 145deg,
+        #b27ccc 215deg,
+        #47c3bf 285deg,
+        #2165b2 360deg
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+      animation: nyc-color-swirl 8s linear infinite;
+    }
+  }
+
+  @keyframes nyc-color-swirl {
+    to {
+      --nyc-swirl-angle: 360deg;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nyc-swirl {
+      color: var(--accent);
+      background: none;
+      animation: none;
+    }
+  }
+</style>
