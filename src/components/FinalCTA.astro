@@ -2,200 +2,39 @@
 import { ctas } from "../content";
 ---
 
-<!-- Scroll anchor — invisible, just gives the page enough height so
-     scrolling here triggers the fill animation. The actual visual
-     (dark bg + content) is the fixed .cta-fill below. -->
-<section
-  class="cta-anchor relative"
-  aria-label="Final call to action"
-  data-nav-merge="true"
-></section>
-
-<!-- Fixed dark fill + content. Sits behind the nav (z-30) and above
-     other page sections. scaleY tied to scroll progress, content
-     fades + slides up tied to the same progress. -->
-<div id="cta-fill" class="cta-fill" aria-hidden="false">
-  <div class="container-x cta-content">
-    <p class="eyebrow !text-white/55">Build with us</p>
+<section class="reveal final-cta border-t border-line py-24 md:py-32">
+  <div class="container-x">
+    <p class="eyebrow">Build with us</p>
     <h2
-      class="display mt-5 text-[clamp(44px,7vw,96px)] text-white max-w-[18ch]"
+      class="display mt-5 text-[clamp(44px,7vw,88px)] text-fg max-w-[16ch]"
     >
       {ctas.final.headline}
     </h2>
-    <p class="mt-6 max-w-[60ch] text-[17px] md:text-[19px] text-white/80">
+    <p class="mt-6 max-w-[52ch] text-[17px] md:text-[19px] leading-[1.5] text-muted">
       {ctas.final.subhead}
     </p>
     <a
       href={ctas.final.cta.href}
       target="_blank"
       rel="noopener noreferrer"
-      class="btn-light mt-9"
+      class="btn-primary mt-9"
     >
       {ctas.final.cta.label}
       <span class="arrow" aria-hidden="true">→</span>
     </a>
   </div>
-
-  <!-- Subtle dot grid backdrop -->
-  <svg
-    class="cta-dots"
-    aria-hidden="true"
-  >
-    <defs>
-      <pattern
-        id="dot-grid"
-        x="0"
-        y="0"
-        width="32"
-        height="32"
-        patternUnits="userSpaceOnUse"
-      >
-        <circle cx="1.5" cy="1.5" r="1.2" fill="rgba(255,255,255,0.18)"></circle>
-      </pattern>
-    </defs>
-    <rect width="100%" height="100%" fill="url(#dot-grid)"></rect>
-  </svg>
-</div>
+</section>
 
 <style>
-  /* Anchor: takes ~120vh in the document so the user must scroll
-     through it. The fill animation runs across this range. */
-  .cta-anchor {
-    height: 120vh;
-    background: transparent;
-  }
-
-  .cta-fill {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 100vh;
-    background: var(--hero-bg);
-    z-index: 30;
-    pointer-events: none;
-    overflow: hidden;
-    /* Origin at the bottom so the dark rises up from below. */
-    transform-origin: center bottom;
-    transform: scaleY(0);
-    /* Smooth per-frame jitter; the main motion is scroll-driven. */
-    transition: transform 120ms linear;
-    will-change: transform;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-
-  /* Content fades + slides as --p approaches 1. CTA button gets
-     pointer-events back when fully expanded. */
-  .cta-content {
-    --p: 0;
-    position: relative;
-    z-index: 2;
-    opacity: calc(max(0, (var(--p) - 0.55)) * 2.3);
-    transform: translateY(calc((1 - var(--p)) * 28px));
-    transition: opacity 200ms linear, transform 200ms linear;
-    will-change: opacity, transform;
-  }
-  .cta-fill[data-on="true"] .cta-content {
-    pointer-events: auto;
-  }
-
-  .cta-dots {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    opacity: calc(var(--p, 0) * 0.4);
-    pointer-events: none;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .cta-fill {
-      transition: opacity 200ms ease;
-      transform: scaleY(1);
-      opacity: 0;
-    }
-    .cta-fill[data-on="true"] {
-      opacity: 1;
-    }
-    .cta-content {
-      opacity: 1;
-      transform: none;
-    }
+  /* Soft blue wash so the closing section reads as a deliberate moment
+     without a heavy solid block. */
+  .final-cta {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(63, 120, 189, 0.05) 0%,
+        rgba(63, 120, 189, 0.02) 100%
+      ),
+      var(--bg);
   }
 </style>
-
-<script>
-  // Scroll-tied progress: scaleY tracks how far into the anchor the
-  // user has scrolled. Two phases:
-  //   Phase 1 — anchor enters viewport -> thin black bar (5% height)
-  //   Phase 2 — anchor advances toward middle -> bar grows to full
-  // Fast scrolls map 1:1 (no queued long transition), no glitching.
-  //
-  // References are `let` (not `const`) because Astro view transitions
-  // swap the DOM — we need to re-query on every astro:after-swap or
-  // the script ends up holding handles to detached nodes (and the
-  // "Build with us" reveal stops working after navigation).
-  let fill: HTMLElement | null = document.getElementById("cta-fill");
-  let nav: HTMLElement | null = document.getElementById("site-nav");
-  let anchor: HTMLElement | null = document.querySelector(".cta-anchor");
-  let content: HTMLElement | null =
-    fill?.querySelector(".cta-content") ?? null;
-  let dots: HTMLElement | null = fill?.querySelector(".cta-dots") ?? null;
-  const BAR_MIN = 0.05;
-  let ticking = false;
-
-  const apply = () => {
-    ticking = false;
-    if (!fill || !anchor) return;
-    const rect = anchor.getBoundingClientRect();
-    const vh = window.innerHeight;
-
-    const ENTER = vh * 1.0; // anchor.top here -> progress 0
-    const BAR = vh * 0.55; // anchor.top here -> progress BAR_MIN
-    const FULL = vh * 0.0; // anchor.top here -> progress 1
-
-    let progress = 0;
-    if (rect.top >= ENTER) {
-      progress = 0;
-    } else if (rect.top >= BAR) {
-      const t = (ENTER - rect.top) / (ENTER - BAR);
-      progress = t * BAR_MIN;
-    } else if (rect.top > FULL) {
-      const t = (BAR - rect.top) / (BAR - FULL);
-      progress = BAR_MIN + (1 - BAR_MIN) * Math.max(0, Math.min(1, t));
-    } else {
-      progress = 1;
-    }
-    // Once the anchor has scrolled off (its bottom above viewport),
-    // collapse back to 0 so the footer is visible.
-    if (rect.bottom < 0) progress = 0;
-    progress = Math.max(0, Math.min(1, progress));
-
-    fill.style.transform = `scaleY(${progress.toFixed(4)})`;
-    fill.dataset.on = progress > 0.6 ? "true" : "false";
-    if (content) content.style.setProperty("--p", progress.toFixed(4));
-    if (dots) dots.style.setProperty("--p", progress.toFixed(4));
-    if (nav) nav.dataset.merge = progress > 0.55 ? "true" : "false";
-  };
-
-  const check = () => {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(apply);
-  };
-
-  check();
-  window.addEventListener("scroll", check, { passive: true });
-  window.addEventListener("resize", check, { passive: true });
-  document.addEventListener("astro:after-swap", () => {
-    // Re-query — the DOM nodes from the prior render are gone.
-    fill = document.getElementById("cta-fill");
-    nav = document.getElementById("site-nav");
-    anchor = document.querySelector(".cta-anchor");
-    content = fill?.querySelector(".cta-content") ?? null;
-    dots = fill?.querySelector(".cta-dots") ?? null;
-    check();
-  });
-</script>

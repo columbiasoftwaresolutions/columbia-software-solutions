@@ -79,82 +79,31 @@ import { nav, hero, WAITLIST_URL } from "../content";
     will-change: contents;
   }
 
-  /* Three states:
-     "top"  -> transparent, sits invisibly on dark hero (page not scrolled)
-     "hero" -> light beige (scrolled but still on hero — inverts over dark)
-     "page" -> dark blackish (scrolled past hero — inverts over light content) */
-
-  /* TOP: page at scrollY=0. No bar bg; nav reads as white text on hero. */
-  #site-nav[data-mode="top"] {
+  /* Two states, both on the light theme:
+     "top"      -> transparent bar over the paper hero
+     "scrolled" -> paper bar with blur + hairline once the user scrolls */
+  #site-nav {
     background: transparent;
     border-bottom: 1px solid transparent;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
   }
-  #site-nav[data-mode="top"] [data-nav-link] {
-    color: rgba(255, 255, 255, 0.85);
-  }
-  #site-nav[data-mode="top"] [data-nav-link]:hover {
-    color: #ffffff;
-  }
-  #site-nav[data-mode="top"] [data-nav-cta] {
-    background: #ffffff;
-    color: var(--hero-bg);
-  }
-  #site-nav[data-mode="top"] [data-nav-cta]:hover {
-    background: rgba(255, 255, 255, 0.9);
-  }
-
-  /* HERO: scrolled a bit, still over hero -> LIGHT beige nav */
-  #site-nav[data-mode="hero"] {
-    background: rgba(230, 227, 224, 0.94);
+  #site-nav[data-mode="scrolled"] {
+    background: rgba(230, 227, 224, 0.85);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--line);
   }
-  #site-nav[data-mode="hero"] [data-nav-link] {
+  #site-nav [data-nav-link] {
     color: rgba(30, 30, 30, 0.7);
   }
-  #site-nav[data-mode="hero"] [data-nav-link]:hover {
+  #site-nav [data-nav-link]:hover {
     color: var(--fg);
   }
-  #site-nav[data-mode="hero"] [data-nav-cta] {
-    background: var(--fg);
-    color: var(--bg);
-  }
-  #site-nav[data-mode="hero"] [data-nav-cta]:hover {
-    background: rgba(30, 30, 30, 0.86);
-  }
-
-  /* Page mode: scrolled past hero -> DARK blackish nav */
-  #site-nav[data-mode="page"] {
-    background: rgba(22, 22, 22, 0.92);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  }
-  #site-nav[data-mode="page"] [data-nav-link] {
-    color: rgba(255, 255, 255, 0.7);
-  }
-  #site-nav[data-mode="page"] [data-nav-link]:hover {
+  #site-nav [data-nav-cta] {
+    background: var(--accent);
     color: #ffffff;
   }
-  #site-nav[data-mode="page"] [data-nav-cta] {
-    background: #ffffff;
-    color: var(--fg);
-  }
-  #site-nav[data-mode="page"] [data-nav-cta]:hover {
-    background: rgba(255, 255, 255, 0.9);
-  }
-
-  /* MERGE: a dark section (e.g. FinalCTA) sits under the nav.
-     Drop the glass + border so the nav reads as one continuous
-     dark surface with the section below it. */
-  #site-nav[data-merge="true"] {
-    background: var(--hero-bg) !important;
-    border-bottom-color: transparent !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
+  #site-nav [data-nav-cta]:hover {
+    background: var(--accent-dark);
   }
 
   /* Mobile only: hide the CTA pill while the long brand text is
@@ -180,15 +129,7 @@ import { nav, hero, WAITLIST_URL } from "../content";
 
   const update = () => {
     if (!nav) return;
-    const y = window.scrollY;
-    const pageThreshold = Math.min(window.innerHeight * 0.6, 500);
-    if (y > pageThreshold) {
-      nav.dataset.mode = "page";
-    } else if (y > 12) {
-      nav.dataset.mode = "hero";
-    } else {
-      nav.dataset.mode = "top";
-    }
+    nav.dataset.mode = window.scrollY > 12 ? "scrolled" : "top";
   };
 
   // -----------------------------------------------------------------
@@ -268,44 +209,16 @@ import { nav, hero, WAITLIST_URL } from "../content";
     }
   }
 
-  // -----------------------------------------------------------------
-  // Merge: when a [data-nav-merge="true"] section sits directly
-  // under the nav, drop the glass + border so the nav visually
-  // fuses with the section. Uses scroll-based geometry check
-  // (more predictable than IO at the exact nav-bottom seam).
-  // -----------------------------------------------------------------
-  const checkMerge = () => {
-    if (!nav) return;
-    const targets = document.querySelectorAll<HTMLElement>(
-      '[data-nav-merge="true"]',
-    );
-    const navBottom = nav.getBoundingClientRect().bottom;
-    let merging = false;
-    for (const t of targets) {
-      const rect = t.getBoundingClientRect();
-      // Section's top is at or above nav bottom AND section's bottom is
-      // still below nav bottom -> section currently sits behind the nav.
-      if (rect.top <= navBottom && rect.bottom > navBottom) {
-        merging = true;
-        break;
-      }
-    }
-    nav.dataset.merge = merging ? "true" : "false";
-  };
-
   update();
   checkBrand();
-  checkMerge();
   window.addEventListener(
     "scroll",
     () => {
       update();
       checkBrand();
-      checkMerge();
     },
     { passive: true },
   );
-  window.addEventListener("resize", checkMerge, { passive: true });
   document.addEventListener("astro:after-swap", () => {
     // Astro view transitions swap the DOM — re-query the elements so
     // we're not holding references to detached nodes from the prior
@@ -322,6 +235,5 @@ import { nav, hero, WAITLIST_URL } from "../content";
     if (brand) brand.textContent = LONG;
     if (nav) nav.dataset.brand = "long";
     checkBrand();
-    checkMerge();
   });
 </script>
