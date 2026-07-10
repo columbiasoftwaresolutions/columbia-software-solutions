@@ -22,7 +22,11 @@ const tabs = [
         <h1
           class="display hero-rise hero-rise-1 text-[clamp(44px,6.4vw,92px)] text-hero-fg"
         >
-          Free software<br />for NYC.
+          Free software<br />for&nbsp;<span class="nyc-stamp" aria-label="NYC">
+            <span class="nyc-stamp-micro" aria-hidden="true">Columbia CS</span>
+            <span class="nyc-stamp-word" aria-hidden="true">NYC</span>
+            <span class="nyc-stamp-micro" aria-hidden="true">Est. 2026</span>
+          </span>.
         </h1>
 
         <p
@@ -81,3 +85,37 @@ const tabs = [
     </div>
   </div>
 </section>
+
+<style>
+  .nyc-stamp {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.07em;
+    min-width: 2.36em;
+    margin-right: 0.04em;
+    padding: 0.1em 0.14em 0.09em;
+    border: 0.027em solid var(--accent);
+    outline: 0.012em solid color-mix(in srgb, var(--accent) 60%, transparent);
+    outline-offset: 0.052em;
+    background: color-mix(in srgb, var(--accent) 7%, transparent);
+    box-shadow: 0.055em 0.055em 0 color-mix(in srgb, var(--accent) 38%, transparent);
+    color: var(--accent);
+    line-height: 0.74;
+    transform: rotate(-1.2deg);
+  }
+
+  .nyc-stamp-word {
+    letter-spacing: -0.075em;
+  }
+
+  .nyc-stamp-micro {
+    font-size: 0.105em;
+    font-weight: 600;
+    letter-spacing: 0.11em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+</style>
